@@ -35,12 +35,6 @@ body {
   align-self: center;
   grid-column-start: 4 / end;
 }
-#main {
-  display: grid;
-  max-width: 98%;
-  margin: 0 auto;
-  grid-template-columns: [start] 100px 20px auto [end];
-}
 .sidebar {
   grid-column: start / 2;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -51,58 +45,4 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   text-align: center;
   cursor: pointer;
-}
-.main-body {
-  grid-column: 3 / 4;
-  display: grid;
-  grid-template-rows: [start-row] 10px 20px 10px auto 10px 25px 10px [end-row];
-  padding: 0px 20px;
-  background-color: #c7f9e4;
-}
-.btn-add {
-  width: 100px;
-  background-color: #6cad70;
-  color: white;
-  border: 0;
-  border-radius: 5px;
-  grid-row: 2 / 3;
-  cursor: pointer;
-}
-.list-data {
-  grid-row: 4 / 5;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-width: 1px 1px 0px 1px;
-}
-.list-data li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 7.5px 10px;
-}
-.list-data button {
-  align-self: flex-end;
-  background-color: #6cad70;
-  color: white;
-  border: 0;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-.nav-pages {
-  grid-row: 6 / 7;
-  align-self: center;
-  justify-self: start;
-}
-.nav-pages li {
-  background-color: #6cad70;
-  border-radius: 5px;
-  display: inline-block;
-}
-.nav-pages a {
-  display: block;
-  text-decoration: none;
-  padding: 6px 11px;
-  color: white;
-  font-size: 12px;
 }
