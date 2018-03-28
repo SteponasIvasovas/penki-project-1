@@ -60,44 +60,90 @@ body {
   padding: 0px 20px;
   background-color: #c7f9e4;
 }
+.create-form {
+  grid-column: 3 / 4;
+  background-color: #c7f9e4;
+  padding: 10px 20px;
+}
+.create-form label {
+  display: block;
+}
+.create-form textarea {
+  width: 100%;
+  resize: none;
+}
+.create-form label,
+.create-form textarea,
+.create-form select {
+  min-width: 200px;
+  border-width: 0;
+  display: block;
+  margin-bottom: 5px;
+}
+.create-form .control {
+  margin-top: 10px;
+}
+.create-form .control button {
+  margin-right: 5px;
+}
 .btn-add {
-  display: flex;
-  flex-direction: column;
+  grid-row: 2 / 3;
   justify-content: center;
+  display: flex;
+
   height: 100%;
-  text-align: center;
-  width: 100px;
+  width: 120px;
   background-color: #6cad70;
-  align-self: center;
   color: white;
   border: 0;
   border-radius: 5px;
-  grid-row: 2 / 3;
   cursor: pointer;
   padding: 0 11px;
 }
 .list-data {
   grid-row: 4 / 5;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-width: 1px 1px 0px 1px;
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+  /* border-width: 1px 1px 0px 1px; */
 }
 .list-data li {
+  /* vertical alignment */
+  align-items: center;
+
   display: flex;
   justify-content: space-between;
-  align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 7.5px 10px;
 }
-.list-data li button {
-  align-self: flex-end;
+.list-data .editable {
+  /* fill up remaining space with flex*/
+  flex-grow: 1;
+  resize: none;
+}
+.list-data .static {
+  text-align: justify;
+  flex-grow: 1;
+
+  width: 1px;
+}
+.list-data .control {
+  text-align: center;
+}
+.list-data .control button {
+  margin-left: 5px;
+}
+.control {
+  min-width: 200px;
+}
+.control button {
+  width: 90px;
   background-color: #6cad70;
   color: white;
   border: 0;
   border-radius: 5px;
   padding: 5px 10px;
-  margin-left: 5px;
   cursor: pointer;
 }
+
 .nav-pages {
   justify-self: start;
   align-self: center;
