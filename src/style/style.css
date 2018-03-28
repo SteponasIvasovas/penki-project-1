@@ -124,24 +124,33 @@ body {
   flex-grow: 1;
 
   width: 1px;
+  min-width: 200px;
 }
 .list-data .control {
-  text-align: center;
+  text-align: right;
 }
 .list-data .control button {
   margin-left: 5px;
 }
 .control {
-  min-width: 200px;
+  /* max-width: 200px; */
 }
 .control button {
-  width: 90px;
-  background-color: #6cad70;
-  color: white;
+  max-width: 90px;
   border: 0;
   border-radius: 5px;
   padding: 5px 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
   cursor: pointer;
+}
+.control button.delete {
+  background-color: #bd2626;
+  color: white;
+}
+.control button.save {
+  background-color: #6cad70;
+  color: white;
 }
 
 .nav-pages {

@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
 import {DATA, dataFormat} from './data.js';
 import './style/style.css';
 
 const perPage = 5;
-
 
 class Main extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class Main extends React.Component {
     this.state = {
       create: false,
       data: this.props.data,
-      selected: Object.keys(this.props.data)[0],
+      selected: Object.keys(dataFormat)[0],
       page: 0,
     };
     this.handleCategoryClick = this.handleCategoryClick.bind(this);
@@ -37,10 +37,8 @@ class Main extends React.Component {
     const newData = {...this.state.data};
     const categoryData = newData[this.state.selected];
     const index = categoryData.findIndex(element => element.id === id);
-    const item = categoryData[index];
-    const newItem = {...item, name: value};
+    const newItem = {...categoryData[index], name: value};
     categoryData[index] = newItem;
-
     this.setState({data: newData});
   }
   handleItemDelete(id) {
@@ -48,7 +46,6 @@ class Main extends React.Component {
     const categoryData = newData[this.state.selected];
     const newCategoryData = categoryData.filter(element => element.id !== id);
     newData[this.state.selected] = newCategoryData;
-
     this.setState({data: newData});
   }
   handleAddClick() {
@@ -67,41 +64,45 @@ class Main extends React.Component {
     });
   }
   render() {
-    const categories = Object.keys(this.props.data);
+    const categories = Object.keys(dataFormat);
+    const selected = this.state.selected, data = this.state.data, page = this.state.page;
     let body;
 
     if (this.state.create) {
       const available = [];
-      for (let key in this.state.data) {
-        available[key] = this.state.data[key].map(item => {
+      for (let key in data) {
+        available[key] = data[key].map(item => {
           return {id: item.id, name: item.name}
         });
       }
 
       body = (
         <CreateForm
-          selected={this.state.selected}
-          data={available}
           onAddCancelClick={this.handleAddCancelClick}
           onAddCreateSubmit={this.handleAddCreateSubmit}
+          // available ids paired with names
+          data={available}
+          // selected category
+          selected={selected}
         />
       );
     } else {
-      let filtered = this.state.data[this.state.selected].slice(this.state.page * perPage,
-        this.state.page * perPage + perPage);
+      let filtered = data[selected].slice(page * perPage,
+        page * perPage + perPage);
 
-      const category = dataFormat[this.state.selected];
-      filtered = filtered.map(d => {
-        let out = d.name + ', ';
-        for (let c in category) {
-          const id = d[category[c].toLowerCase()];
-          out += getName(this.state.data, c, id) + ', ';
+      const category = dataFormat[selected];
+      filtered = filtered.map(item => {
+        let out = item.name + ', ';
+        for (let key in category) {
+          const id = item[category[key]];
+          const name = getName(data, key, id);
+          if (name) out += name + ', ';
         }
 
-        return {...d, out: out.replace(/(.*),/, "$1.")};
+        return {...item, out: out.replace(/(.*),/, "$1.")};
       });
 
-      const pages = Math.ceil(this.state.data[this.state.selected].length / perPage)
+      const pages = Math.ceil(data[selected].length / perPage)
 
       body = (
         <MainBody
@@ -110,7 +111,7 @@ class Main extends React.Component {
           onItemDelete={this.handleItemDelete}
           onAddClick={this.handleAddClick}
           data={filtered}
-          page={this.state.page}
+          page={page}
           pages={pages}
         />
       );
@@ -118,7 +119,10 @@ class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <Sidebar onSidebarItemClick={this.handleCategoryClick} categories={categories}/>
+        <Sidebar
+          onSidebarItemClick={this.handleCategoryClick}
+          categories={categories}
+        />
         {body}
       </React.Fragment>
     );
@@ -131,13 +135,13 @@ class Sidebar extends React.Component {
     this.handleCategoryClick = this.handleCategoryClick.bind(this);
   }
   handleCategoryClick(event) {
-    this.props.onSidebarItemClick(event.target.textContent);
+    this.props.onSidebarItemClick(event.target.textContent.toLowerCase());
   }
   render() {
     const categories = this.props.categories.map(category => {
       return (
         <li key={category} onClick={this.handleCategoryClick}>
-          {category}
+          {cap(category)}
         </li>
       );
     });
@@ -173,7 +177,6 @@ class MainBody extends React.Component {
     this.props.onAddClick();
   }
   render() {
-
     return (
       <div className="main-body">
         <button onClick={this.handleAddClick} className="btn-add">Prideti nauja</button>
@@ -184,7 +187,9 @@ class MainBody extends React.Component {
         />
         <NavPages
           onPageClick={this.handlePageClick}
+          // pages = kiek is viso puslapiu
           pages={this.props.pages}
+          // current = dabartinis puslapis
           current={this.props.page}
         />
       </div>
@@ -195,21 +200,20 @@ class MainBody extends React.Component {
 class CreateForm extends React.Component {
   constructor(props) {
     super(props);
-    const selects = [];
+    const selectsIds = [];
     //isrenkam categorijos kejus pvz: kategorija: namai, kejai: Miestas, Gatve, Rajonas
     //category bus {Miestas, Gatve, Rajonas}
     const category = dataFormat[this.props.selected];
     for (let key in category) {
       // selects[Miestas.toLowerCase()] = {id: 1, name: Grazus miestas - 1}
-      selects[category[key].toLowerCase()] = this.props.data[key][0] || null;
+      if (this.props.data[key][0]) {
+        selectsIds[category[key]] = this.props.data[key][0].id || null;
+      }
     }
-
-    const selectsId = selects.map(s => s.id);
-    const selectsNames = selects.map(s => s.name);
 
     this.state = {
       name: '',
-      selects: selectsId,
+      selects: selectsIds,
     }
 
     this.handleAddCancelClick = this.handleAddCancelClick.bind(this);
@@ -218,14 +222,12 @@ class CreateForm extends React.Component {
     this.handleNameChange = this.handleNameChange.bind(this);
   }
   handleAddCancelClick(event) {
-    this.props.onAddCancelClick();
     event.preventDefault();
+    this.props.onAddCancelClick();
   }
   handleAddCreateSubmit(event) {
     event.preventDefault();
-    const selected = this.props.selected;
-    const data = this.props.data
-    const ds = data[selected];
+    const ds = this.props.data[this.props.selected];
     const newId = ds.length > 0 ? ds[ds.length - 1].id + 1 : 1;
     const newItem = {...this.state.selects, name: this.state.name, id: newId};
     console.log(newItem);
@@ -233,20 +235,20 @@ class CreateForm extends React.Component {
   }
   handleAddSelect(key, event) {
     const selects = {...this.state.selects};
-    selects[key].id = Number(event.target.value);
-    console.log(selects[key]);
+    selects[key] = Number(event.target.value);
     this.setState({selects: selects});
   }
   handleNameChange(event) {
     this.setState({name: event.target.value});
   }
   render() {
-    const selected = this.props.selected;
+    const selected = this.props.selected, data = this.props.data;
+    const category = dataFormat[selected];
     const selects = [];
 
-    for (let key in dataFormat[selected]) {
+    for (let key in category) {
       const options = [];
-      this.props.data[key].forEach(item => {
+      data[key].forEach(item => {
         options.push(
           <option value={item.id}>
             {item.name}
@@ -256,9 +258,9 @@ class CreateForm extends React.Component {
       selects.push(
         <React.Fragment>
           <label>
-            {dataFormat[selected][key]}
+            {cap(category[key])}
           </label>
-          <select onChange={this.handleAddSelect.bind(this, dataFormat[selected][key].toLowerCase())}>
+          <select onChange={this.handleAddSelect.bind(this, category[key])}>
             {options}
           </select>
         </React.Fragment>
@@ -271,8 +273,8 @@ class CreateForm extends React.Component {
         <textarea value={this.state.name} onChange={this.handleNameChange}></textarea>
         {selects}
         <div className='control'>
-          <button type='submit'>Sukurti</button>
-          <button onClick={this.handleAddCancelClick}>Atsaukti</button>
+          <button className='save' type='submit'>Sukurti</button>
+          <button className='delete' onClick={this.handleAddCancelClick}>Atsaukti</button>
         </div>
       </form>
     );
@@ -295,16 +297,16 @@ class DataList extends React.Component {
     const dataItems = this.props.data.map(dataItem => {
       return (
         <DataRow
-          dataItem={dataItem}
-          key={dataItem.id}
           onNameChange={this.handleNameChange}
           onItemDelete={this.handleItemDelete}
+          dataItem={dataItem}
+          key={dataItem.id}
         />
       );
     });
 
     return (
-      <ul className='list-data' ref={((el) => this.el = el)} style={{minHeight: this.height}}>
+      <ul className='list-data'>
         {dataItems}
       </ul>
     );
@@ -326,7 +328,6 @@ class DataRow extends React.Component {
   }
   handleCancelClick() {
     this.setState({
-      value: this.props.dataItem.name,
       editable: false,
     })
   }
@@ -345,14 +346,22 @@ class DataRow extends React.Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (!prevState.editable && this.state.editable) {
-      //focus
-      this.input.focus();
+      //focus & selection
+      this.textArea.focus();
       const name = this.state.value;
-      this.input.selectionStart = name.length;
-      this.input.selectionEnd = name.length;
+      this.textArea.selectionStart = name.length;
+      this.textArea.selectionEnd = name.length;
       //set height
       const el = document.querySelector('.list-data .editable');
-      el.style.height = this.input.scrollHeight + 'px';
+      el.style.minHeight = this.textArea.scrollHeight + 'px';
+
+      window.addEventListener('resize', () => {
+        const el = document.querySelector('.list-data .editable');
+        // console.log(this.textArea.scrollHeight);
+        // el.style.height = this.textArea.scrollHeight;
+        // console.log(el.style.height);
+      });
+      // console.log(window.innerWidth);
     }
   }
   render() {
@@ -363,9 +372,9 @@ class DataRow extends React.Component {
         {this.state.editable ?
           <textarea
             className='editable'
-            value={this.state.value}
             onChange={this.handleNameChange}
-            ref={(input) => (this.input = input)}
+            value={this.state.value}
+            ref={(textArea) => (this.textArea = textArea)}
           />:
           <span className='static'>
             {dataItem.out}
@@ -373,12 +382,12 @@ class DataRow extends React.Component {
         }
         {this.state.editable ?
           (<div className='control'>
-            <button onClick={this.handleSaveClick.bind(this, dataItem.id)}>Issaugoti</button>
-            <button onClick={this.handleCancelClick}>Atsaukti</button>
+            <button className='save' onClick={this.handleSaveClick.bind(this, dataItem.id)}>Issaugoti</button>
+            <button className='delete' onClick={this.handleCancelClick}>Atsaukti</button>
           </div>) :
           (<div className='control'>
-            <button onClick={this.handleEditClick}>Redaguoti</button>
-            <button onClick={this.handleDeleteClick.bind(this, dataItem.id)}>Istrinti</button>
+            <button className='save' onClick={this.handleEditClick}>Redaguoti</button>
+            <button className='delete' onClick={this.handleDeleteClick.bind(this, dataItem.id)}>Istrinti</button>
           </div>)
         }
       </li>
@@ -453,4 +462,8 @@ function getName(data, category, id) {
       return item.name;
     }
   }
+}
+
+function cap(string) {
+  return string.slice(0, 1).toUpperCase() + string.slice(1);
 }

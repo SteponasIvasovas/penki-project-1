@@ -32,16 +32,16 @@ const DATA = {
 
 const dataFormat = {
   namai: {
-    gatves: 'Gatve',
-    rajonai: 'Rajonas',
-    miestai: 'Miestas',
+    gatves: 'gatve',
+    rajonai: 'rajonas',
+    miestai: 'miestas',
   },
   gatves: {
-    rajonai: 'Rajonas',
-    miestai: 'Miestas',
+    rajonai: 'rajonas',
+    miestai: 'miestas',
   },
   rajonai: {
-    miestai: 'Miestas'
+    miestai: 'miestas'
   },
   miestai: {
   }
