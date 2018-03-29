@@ -38,20 +38,23 @@ body {
 }
 #main {
   display: grid;
-  max-width: 98%;
+  max-width: 95%;
   margin: 0 auto;
   grid-template-columns: [start] 100px 20px auto [end];
 }
 .sidebar {
   grid-column: start / 2;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
   background-color: #c7f9e4;
 }
 .sidebar li {
   padding: 10px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
   text-align: center;
   cursor: pointer;
+}
+.sidebar span {
+  text-decoration: underline;
 }
 .main-body {
   grid-column: 3 / 4;
@@ -68,12 +71,8 @@ body {
 .create-form label {
   display: block;
 }
-.create-form textarea {
-  width: 100%;
-  resize: none;
-}
 .create-form label,
-.create-form textarea,
+.create-form input,
 .create-form select {
   min-width: 200px;
   border-width: 0;
@@ -88,17 +87,8 @@ body {
 }
 .btn-add {
   grid-row: 2 / 3;
-  justify-content: center;
-  display: flex;
-
-  height: 100%;
-  width: 120px;
-  background-color: #6cad70;
-  color: white;
-  border: 0;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 0 11px;
+  /* microsoft edge align text vertically center */
+  /***********************************************/
 }
 .list-data {
   grid-row: 4 / 5;
@@ -117,7 +107,6 @@ body {
 .list-data .editable {
   /* fill up remaining space with flex*/
   flex-grow: 1;
-  resize: none;
 }
 .list-data .static {
   text-align: justify;
@@ -132,25 +121,24 @@ body {
 .list-data .control button {
   margin-left: 5px;
 }
-.control {
-  /* max-width: 200px; */
+.update-form {
 }
-.control button {
-  max-width: 90px;
-  border: 0;
-  border-radius: 5px;
-  padding: 5px 10px;
+.update-form .selects {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 5px;
-  margin-top: 5px;
-  cursor: pointer;
 }
-.control button.delete {
-  background-color: #bd2626;
-  color: white;
+.update-form .selects label {
+  min-width: 80px;
+  margin-right: 5px;
 }
-.control button.save {
-  background-color: #6cad70;
-  color: white;
+.update-form input {
+  border: 1;
+  padding-left: 5px;
+  width: 100%;
+}
+.update-form select {
+  width: 100%;
 }
 
 .nav-pages {

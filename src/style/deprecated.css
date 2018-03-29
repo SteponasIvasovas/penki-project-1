@@ -1,0 +1,36 @@
+.btn-add {
+  grid-row: 2 / 3;
+  justify-content: center;
+  /* microsoft edge align text vertically center */
+  align-items: center;
+  /***********************************************/
+  display: flex;
+  height: 100%;
+  width: 120px;
+  background-color: #6cad70;
+  color: white;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0 11px;
+}
+
+.control {
+}
+.control button {
+  max-width: 90px;
+  border: 0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  color: white ;
+}
+.control button.delete {
+  background-color: #bd2626;
+  /* color: white; */
+}
+.control button.save {
+  background-color: #6cad70;
+}

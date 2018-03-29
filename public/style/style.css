@@ -30,19 +30,12 @@ body {
   padding: 0 10px;
   height: 100%;
   text-decoration: none;
+  color: black;
 }
 .login-control {
   align-self: center;
   grid-column-start: 4 / end;
 }
-.sidebar {
-  grid-column: start / 2;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: #c7f9e4;
-}
-.sidebar li {
-  padding: 10px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  text-align: center;
-  cursor: pointer;
+.login-control a {
+  color: black;
 }
