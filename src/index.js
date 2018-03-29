@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 //mine
 import {DATA, dataFormat} from './data.js';
@@ -152,31 +153,31 @@ class MainBody extends React.Component {
 
     const category = dataFormat[selected];
     filtered = filtered.map(item => {
-      // let out = item.name + ', ';
-      let out2 = [item.name];
+      let out = [item.name];
       for (let key in category) {
         const id = item[category[key]];
         const name = getName(data, key, id);
         if (name) {
-          // out += name + ', ';
-          out2.push(name);
+          out.push(name);
         }
       }
 
-      // return {...item, out: out.replace(/(.*),/, "$1.")};
-      return {...item, out: out2.reverse().join(', ') + '.'};
+      return {...item, out: out.reverse().join(', ') + '.'};
     });
 
     const pages = Math.ceil(data[selected].length / perPage);
-    const style = {
-      height: '100%'
-    }
 
     return (
       <div className="main-body">
         {/* <button onClick={this.handleAddClick} className="btn-add">Prideti nauja</button> */}
         <div className="btn-add">
-          {muiWrap(<RaisedButton primary={true} style={style} label="Prideti nauja" onClick={this.handleAddClick}></RaisedButton>)}
+          {muiWrap(
+            <RaisedButton
+              primary={true}
+              label="Prideti nauja"
+              onClick={this.handleAddClick}>
+            </RaisedButton>
+          )}
         </div>
         <DataList
           onItemDelete={this.handleItemDelete}
@@ -219,9 +220,8 @@ class CreateForm extends React.Component {
     const newItem = {...this.state.selects, name: this.state.name, id: newId};
     this.props.onAddCreateSubmit(newItem);
   }
-  handleAddSelect(key, event) {
-    const selects = {...this.state.selects};
-    selects[key] = Number(event.target.value);
+  handleAddSelect(key, _,value) {
+    const selects = {...this.state.selects, [key]: value};
     this.setState({selects: selects});
   }
   handleNameChange(event) {
@@ -229,23 +229,33 @@ class CreateForm extends React.Component {
   }
   render() {
     const selected = this.props.selected, data = this.props.data;
-    const selects = generateSelects(data, selected, this.handleAddSelect, this.state.selects);
+    const labelStyle = {fontSize: 10}, buttonStyle = {marginRight: 5};
+    const selects = generateSelects(data, selected, this.handleAddSelect, this.state.selects, this);
 
     return (
       <form className='create-form' onSubmit={this.handleAddCreateSubmit}>
-        {/* <label>Pavadinimas</label> */}
-        {/* <input value={this.state.name} onChange={this.handleNameChange}/> */}
         {muiWrap(
           <TextField
             value={this.state.name}
             onChange={this.handleNameChange}
             floatingLabelText="Pavadinimas"
-          />
-        )}
-        {muiWrap(selects)}
+          />)}
+        {selects}
         <div className='control'>
-          <button className='save' type='submit'>Sukurti</button>
-          <button className='delete' onClick={this.handleAddCancelClick}>Atsaukti</button>
+          {muiWrap(
+            <RaisedButton
+              type='submit'
+              primary={true}
+              style={buttonStyle}
+              label="Sukurti"
+              labelStyle={labelStyle}/>,
+            <RaisedButton
+              secondary={true}
+              style={buttonStyle}
+              label="Atsaukti"
+              labelStyle={labelStyle}
+              onClick={this.handleAddCancelClick}/>
+          )}
         </div>
       </form>
     );
@@ -269,12 +279,12 @@ class DataList extends React.Component {
     const dataItems = this.props.fData.map(dataItem => {
       return (
         <DataRow
+          key={dataItem.id}
           onDataChange={this.handleDataChange}
           onItemDelete={this.handleItemDelete}
           dataItem={dataItem}
           data={data}
           selected={selected}
-          key={dataItem.id}
         />
       );
     });
@@ -320,9 +330,9 @@ class DataRow extends React.Component {
     this.setState({editable: true});
   }
   handleSaveClick(id) {
-    this.setState({editable: false});
     const newItem = {...this.state.selects, name: this.state.name, id: id};
     this.props.onDataChange(id, newItem);
+    this.setState({editable: false});
   }
   handleDeleteClick(id) {
     this.props.onItemDelete(id);
@@ -330,101 +340,80 @@ class DataRow extends React.Component {
   handleNameChange(event) {
     this.setState({name: event.target.value});
   }
-  handleEditSelect(key, event) {
-    const selects = {...this.state.selects};
-    selects[key] = Number(event.target.value);
+  handleEditSelect(key, _, value) {
+    const selects = {...this.state.selects, [key]: value};
     this.setState({selects: selects});
   }
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.editable && this.state.editable) {
-      //focus & selection
-      this.textArea.focus();
-      const name = this.state.name;
-      this.textArea.selectionStart = name.length;
-      this.textArea.selectionEnd = name.length;
-      //set height
-      const el = document.querySelector('.list-data .editable');
-      el.style.minHeight = this.textArea.scrollHeight + 'px';
-    }
   }
   render() {
     const selected = this.props.selected, data = this.props.data, dataItem = this.props.dataItem, editable = this.state.editable;
-    const labelStyle = {
-      fontSize: 10,
-    };
-    const style = {
-      marginRight: 5,
-      marginLeft: 5,
-    };
+    const labelStyle = {fontSize: 10}, buttonStyle = {marginRight: 5, marginLeft: 5};
 
     let body;
     if (editable) {
-      const selects = generateSelects(data, selected, this.handleEditSelect, this.state.selects);
+      const selects = generateSelects(data, selected, this.handleEditSelect, this.state.selects, this);
 
       body = (
         <React.Fragment>
           <div className='update-form editable'>
-            <div className='selects'>
-              <label> Pavadinimas </label>
-              <input
-                type='text'
-                // className='editable'
-                onChange={this.handleNameChange}
+            {muiWrap(
+              <TextField
                 value={this.state.name}
-                ref={(textArea) => (this.textArea = textArea)}
-              />
-            </div>
+                onChange={this.handleNameChange}
+                floatingLabelText="Pavadinimas"
+                ref={(input) => (this.input = input)}
+              />)}
             {selects}
           </div>
           <div className='control'>
             {muiWrap(
               <RaisedButton
                 primary={true}
-                style={style}
+                style={{...buttonStyle, marginLeft: 0}}
                 label="Issaugoti"
                 labelStyle={labelStyle}
                 onClick={this.handleSaveClick.bind(this, dataItem.id)}/>,
               <RaisedButton
                 secondary={true}
-                style={style}
+                style={buttonStyle}
                 label="Atsaukti"
                 labelStyle={labelStyle}
                 onClick={this.handleCancelClick}/>
             )}
-            {/* <button className='save' onClick={this.handleSaveClick.bind(this, dataItem.id)}>Issaugoti</button>
-            <button className='delete' onClick={this.handleCancelClick}>Atsaukti</button> */}
           </div>
         </React.Fragment>
       );
     } else {
-
-
+      const centerAlign = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }
       body = (
-        <React.Fragment>
-          <div className='static'>
-            <span>
+        muiWrap(
+          <Card containerStyle={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+            <CardText style={centerAlign}>
               {dataItem.out}
-            </span>
-          </div>
-          <div className='control'>
-            {muiWrap(
-              <RaisedButton
-                primary={true}
-                style={style}
-                label="Redaguoti"
-                labelStyle={labelStyle}
-                onClick={this.handleEditClick}/>,
-              <RaisedButton
-                secondary={true}
-                style={style}
-                label="Istrinti"
-                labelStyle={labelStyle}
-                onClick={this.handleEditClick}/>
-            )}
-            {/* <button className='save' onClick={this.handleEditClick}>Redaguoti</button>
-            <button className='delete' onClick={this.handleDeleteClick.bind(this, dataItem.id)}>Istrinti</button> */}
-          </div>
-        </React.Fragment>
+            </CardText>
+            <CardActions>
+              {muiWrap(
+                  <RaisedButton
+                    primary={true}
+                    style={buttonStyle}
+                    label="Redaguoti"
+                    labelStyle={labelStyle}
+                    onClick={this.handleEditClick}/>,
+                  <RaisedButton
+                    secondary={true}
+                    style={buttonStyle}
+                    label="Istrinti"
+                    labelStyle={labelStyle}
+                    onClick={this.handleDeleteClick.bind(this, dataItem.id)}/>
+              )}
+            </CardActions>
+          </Card>
+        )
       );
     }
 
@@ -453,7 +442,8 @@ class NavPages extends React.Component {
       if (count >= 2) {
         const className = (this.props.current === 0) ? 'disabled' : '';
         pages.push(
-          <li className={className}
+          <li key={0}
+              className={className}
               onClick={this.handleClick.bind(this, this.props.current - 1)}>
             &lt;
           </li>
@@ -463,7 +453,8 @@ class NavPages extends React.Component {
       for (let i = 0; i < this.props.pages; i++) {
         const className = (i === this.props.current) ? 'active' : '';
         pages.push(
-          <li className={className}
+          <li key={i + 1}
+              className={className}
               onClick={this.handleClick.bind(this, i)}>
             {i + 1}
           </li>
@@ -473,7 +464,8 @@ class NavPages extends React.Component {
       if (count >= 2) {
         const className = (this.props.current === count - 1) ? 'disabled' : '';
         pages.push(
-          <li className={className}
+          <li key={count + 1}
+              className={className}
               onClick={this.handleClick.bind(this, this.props.current + 1)}>
             &gt;
           </li>
@@ -504,57 +496,49 @@ function getName(data, category, id) {
   }
 }
 
-function cap(string) {
-  return string.slice(0, 1).toUpperCase() + string.slice(1);
-}
+// function cap(string) {
+//   return string.slice(0, 1).toUpperCase() + string.slice(1);
+// }
 
-function generateSelects(data, selected, handler, ids = false) {
+function generateSelects(data, selected, handler, ids, component) {
   const category = dataFormat[selected];
   const selects = [];
 
   for (let key in category) {
     const options = [];
     options.push(
-      // <option value={null}>
-      //   -----------
-      // </option>
-      <MenuItem floatingLabelText="-------" value={null}/>
+      <MenuItem value={null} primaryText="-------" />
     );
     data[key].forEach(item => {
       options.push(
-        // <option value={item.id}>
-        //   {item.name}
-        // </option>
         <MenuItem value={item.id} primaryText={item.name} />
       );
     });
 
     selects.push(
-      <div className='selects'>
-        {/* <label>
-          {cap(category[key])}
-        </label>
-        <select value={ids[category[key]]} onChange={handler.bind(this, category[key])}>
-          {options}
-        </select> */}
+      <MuiThemeProvider key={category[key]}>
         <SelectField
           floatingLabelText={category[key]}
           value={ids[category[key]]}
-          onChange={handler.bind(this, category[key])}
-        >
-          {options}
-        </SelectField>
-      </div>
-    )
+          fullWidth={true}
+          onChange={handler.bind(component, category[key])}
+          >
+            {options}
+          </SelectField>
+     </MuiThemeProvider>
+    );
   }
 
   return selects;
 }
 
 function muiWrap(...components) {
-  return (
-    <MuiThemeProvider>
-      {components}
-    </MuiThemeProvider>
-  );
+  const wrapped = components.map((c, i) => {
+    return (
+      <MuiThemeProvider key={i}>
+        {c}
+      </MuiThemeProvider>
+    )
+  })
+  return wrapped;
 }

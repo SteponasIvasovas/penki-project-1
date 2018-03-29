@@ -99,10 +99,10 @@ body {
   /* vertical alignment */
   align-items: center;
 
-  display: flex;
-  justify-content: space-between;
+  /* display: flex; */
+  /* justify-content: space-between; */
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 7.5px 10px;
+  /* padding: 7.5px 10px; */
 }
 .list-data .editable {
   /* fill up remaining space with flex*/
@@ -116,7 +116,7 @@ body {
   min-width: 200px;
 }
 .list-data .control {
-  text-align: right;
+  text-align: left;
 }
 .list-data .control button {
   margin-left: 5px;
