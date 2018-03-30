@@ -1,0 +1,31 @@
+{
+  "name": "penki-project-1",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "index.js",
+  "dependencies": {
+    "material-ui": "^0.20.0",
+    "material-ui-pagination": "^1.1.7",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "react-scripts": "^1.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteponasIvasovas/penki-project-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteponasIvasovas/penki-project-1/issues"
+  },
+  "homepage": "https://github.com/SteponasIvasovas/penki-project-1#readme"
+}
