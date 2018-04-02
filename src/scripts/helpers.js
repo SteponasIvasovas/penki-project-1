@@ -12,18 +12,8 @@ function muiWrap(...components) {
   return wrapped;
 }
 
-function getName(data, category, id) {
-  const array = data[category];
-
-  for (let item of array) {
-    if (item.id === id) {
-      return item.name;
-    }
-  }
-}
-
 function cap(string) {
   return string.slice(0, 1).toUpperCase() + string.slice(1);
 }
 
-export {muiWrap, getName, cap};
+export {muiWrap, cap};

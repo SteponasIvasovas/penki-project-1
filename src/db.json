@@ -1,0 +1,118 @@
+{
+  "namai": [
+    {
+      "id": 1,
+      "name": "Geguzio namas",
+      "miestai_id": 1,
+      "rajonai_id": 1,
+      "gatves_id": 1
+    },
+    {
+      "id": 2,
+      "name": "namas - 2",
+      "miestai_id": 1,
+      "rajonai_id": 2,
+      "gatves_id": 2
+    },
+    {
+      "id": 3,
+      "name": "namas - 3",
+      "miestai_id": 1,
+      "rajonai_id": 2,
+      "gatves_id": 3
+    },
+    {
+      "id": 4,
+      "name": "namas - 4",
+      "miestai_id": 2,
+      "rajonai_id": 3,
+      "gatves_id": 4
+    },
+    {
+      "id": 5,
+      "name": "namas - 5",
+      "miestai_id": 2,
+      "rajonai_id": 3,
+      "gatves_id": 4
+    },
+    {
+      "id": 6,
+      "name": "namas - 6",
+      "miestai_id": 2,
+      "rajonai_id": 3,
+      "gatves_id": 4
+    },
+    {
+      "id": 7,
+      "name": "namas - 7",
+      "miestai_id": 2,
+      "rajonai_id": 3,
+      "gatves_id": 4
+    }
+  ],
+  "gatves": [
+    {
+      "id": 1,
+      "name": "Taikos g.",
+      "miestai_id": 1,
+      "rajonai_id": 1
+    },
+    {
+      "id": 2,
+      "name": "gatve - 2",
+      "miestai_id": 1,
+      "rajonai_id": 2
+    },
+    {
+      "id": 3,
+      "name": "gatve - 3",
+      "miestai_id": 1,
+      "rajonai_id": 2
+    },
+    {
+      "id": 4,
+      "name": "gatve - 4",
+      "miestai_id": 2,
+      "rajonai_id": 3
+    }
+  ],
+  "rajonai": [
+    {
+      "id": 1,
+      "name": "Justiniskes",
+      "miestai_id": 1
+    },
+    {
+      "id": 2,
+      "name": "rajonas - 2",
+      "miestai_id": 3
+    },
+    {
+      "id": 3,
+      "name": "rajonas - 3",
+      "miestai_id": 2
+    }
+  ],
+  "miestai": [
+    {
+      "id": 1,
+      "name": "Siauliai"
+    },
+    {
+      "id": 2,
+      "name": "Kaunas"
+    },
+    {
+      "id": 3,
+      "name": "Ryga"
+    },
+    {
+      "name": "Vilnius",
+      "id": 4
+    },
+    {
+      "name": "Minskas",
+      "id": 7
+    }
+  ]
+}

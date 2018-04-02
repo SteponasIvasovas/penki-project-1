@@ -1,9 +1,16 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import Main from './main.js';
-import {DATA} from './data.js';
+import Main from './Main.js';
+import Header from './Header.js'
+
 
 ReactDOM.render(
-  <Main data={DATA} />,
+  <Header />,
+  document.getElementById('header')
+);
+
+
+ReactDOM.render(
+  <Main />,
   document.getElementById('main')
 );

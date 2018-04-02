@@ -1,41 +1,10 @@
 /*
-list border color : rgba(0, 0, 0, 0.1)
-background color : #d4ffed
-header color : #75bfa0
-main sections color : #c7f9e4
-buttons color : #27712c
+background color : #f1f1f1
+36px -> material ui buttonHeight
 */
 body {
-  background-color: #d4ffed;
+  background-color: #f1f1f1;
 }
 #header {
-  display: grid;
-  grid-template-columns: [start] 100px auto 100px [end];
   margin-bottom: 20px;
-  background-color: #75bfa0;
-}
-.logo {
-  height: 50px;
-  grid-column: start / 2;
-}
-.navbar {
-  grid-column: 2 / 3;
-  justify-self: start;
-  height: 100%;
-  display: table;
-}
-.navbar a {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0 10px;
-  height: 100%;
-  text-decoration: none;
-  color: black;
-}
-.login-control {
-  align-self: center;
-  grid-column-start: 4 / end;
-}
-.login-control a {
-  color: black;
 }

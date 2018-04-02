@@ -1,0 +1,8 @@
+1. install json-server : https://www.npmjs.com/package/json-server
+
+2. json-server --watch db.json --port 3004 --fks _id
+
+3. add to package.json in "scripts"
+"dev-server": "json-server -p 3004 db.json"
+
+4. update npm

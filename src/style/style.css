@@ -1,47 +1,15 @@
 /*
-list border color : rgba(0, 0, 0, 0.1)
 background color : #f1f1f1
-header color : #75bfa0
-main sections color : #c7f9e4
-buttons color : #27712c
-active : #08ca14;
-disabled: #bababa;
 36px -> material ui buttonHeight
 */
-body {
-  background-color: #f1f1f1;
-}
-#header {
-  display: grid;
-  grid-template-columns: [start] 100px auto 100px [end];
-  margin-bottom: 20px;
-  background-color: #75bfa0;
-}
-.logo {
-  height: 50px;
-  grid-column: start / 2;
-}
-.navbar {
-  grid-column: 2 / 3;
-  justify-self: start;
-  height: 100%;
-  display: table;
-}
-.navbar a {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0 10px;
-  text-decoration: none;
-}
-.login-control {
-  align-self: center;
-  grid-column-start: 4 / end;
-}
 #main {
   display: grid;
   max-width: 95%;
   margin: 0 auto;
   grid-template-columns: [start] 112px 10px auto [end];
+}
+.sidebar {
+  grid-column: start / 2;
 }
 .main-body {
   grid-column: 3 / 4;
@@ -53,5 +21,5 @@ body {
 }
 .list-data {
   grid-row: 4 / 5;
-  align-self: start;
+  /* align-self: start; */
 }

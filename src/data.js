@@ -1,50 +1,100 @@
-const DATA = {
-  namai:
-  [
-    {id: 1, name: 'namas - 1', miestas: 1, rajonas: 1, gatve: 1},
-    {id: 2, name: 'namas - 2', miestas: 1, rajonas: 2, gatve: 2},
-    {id: 3, name: 'namas - 3', miestas: 1, rajonas: 2, gatve: 3},
-    {id: 4, name: 'namas - 4', miestas: 2, rajonas: 3, gatve: 4},
-    {id: 5, name: 'namas - 5', miestas: 2, rajonas: 3, gatve: 4},
-    {id: 6, name: 'namas - 6', miestas: 2, rajonas: 3, gatve: 4},
-    {id: 7, name: 'namas - 7', miestas: 2, rajonas: 3, gatve: 4},
-    {id: 8, name: 'namas - 8', miestas: 2, rajonas: 3, gatve: 4},
-  ],
-  gatves:
-  [
-    {id: 1, name: 'gatve - 1', miestas: 1, rajonas: 1},
-    {id: 2, name: 'gatve - 2', miestas: 1, rajonas: 2},
-    {id: 3, name: 'gatve - 3', miestas: 1, rajonas: 2},
-    {id: 4, name: 'gatve - 4', miestas: 2, rajonas: 3},
-  ],
-  rajonai:
-  [
-    {id: 1, name: 'rajonas - 1', miestas: 1},
-    {id: 2, name: 'rajonas - 2', miestas: 1},
-    {id: 3, name: 'rajonas - 3', miestas: 2},
-  ],
-  miestai:
-  [
-    {id: 1, name: 'miestas - 1'},
-    {id: 2, name: 'miestas - 2'},
-  ],
-};
-
-const dataFormat = {
-  namai: {
-    gatves: 'gatve',
-    rajonai: 'rajonas',
-    miestai: 'miestas',
-  },
-  gatves: {
-    rajonai: 'rajonas',
-    miestai: 'miestas',
-  },
-  rajonai: {
-    miestai: 'miestas'
-  },
-  miestai: {
-  }
+const FOREIGN = {
+  gatves_id: 'gatves',
+  rajonai_id: 'rajonai',
+  miestai_id: 'miestai',
+}
+const FORMAT = {
+  namai : ['id', 'name', 'miestai_id', 'gatves_id', 'rajonai_id'],
+  gatves: ['id', 'name', 'rajonai_id', 'miestai_id'],
+  rajonai : ['id', 'name', 'miestai_id'],
+  miestai : ['id', 'name'],
 }
 
-export {DATA, dataFormat};
+async function select(categories, where = null) {
+  let promises = [];
+
+  for (let category of categories) {
+    promises.push(fetch(`http://localhost:3004/${category}`));
+  }
+
+  let select = await Promise.all(promises).then(responses => {
+    return Promise.all(responses.map(r => r.json()));
+  }).then(json => {
+    return json.reduce((a, b) => a.concat(b));
+  });
+
+  if (where) return where(select);
+  else return select;
+}
+
+function remove(category, id) {
+  return fetch(`http://localhost:3004/${category}/${id}`, {
+    "method": "DELETE",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  }).then(response => response.json()).then(json => {
+    // console.log(json);
+  });
+
+
+  // const newDATA = {...DATA};
+  //
+  // let fKey;
+  // for (let key in FOREIGN) {
+  //   if (FOREIGN[key] === category) {
+  //     fKey = key;
+  //     break;
+  //   }
+  // }
+  //
+  // const categories = Object.keys(FORMAT);
+  // for(let c of categories) {
+  //   if (FORMAT[c].includes(fKey)) {
+  //     const cDATA = newDATA[c].slice();
+  //     cDATA.forEach((item, index) => {
+  //       if (item[fKey] === id) {
+  //         cDATA[index] = {...item, [fKey] : null};
+  //       }
+  //     });
+  //     newDATA[c] = cDATA;
+  //   }
+  // }
+  //
+  // newDATA[category] = newDATA[category].filter(item => item.id !== id);
+}
+
+function update(category, id, values) {
+  return fetch(`http://localhost:3004/${category}/${id}`, {
+    "method": "PUT",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    "body": JSON.stringify(values)
+  }).then(response => response.json()).then(json => {
+    // console.log(json);
+  });
+}
+
+function insert(category, values) {
+  return fetch(`http://localhost:3004/${category}`, {
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(values)
+  }).then(response => response.json()).then(json => {
+    // console.log(json);
+  });
+}
+
+function foreign(category) {
+  const allFKeys = Object.keys(FOREIGN);
+  const fKeys = FORMAT[category].filter(key => allFKeys.includes(key));
+  return fKeys;
+}
+
+export {FORMAT, FOREIGN, select, remove, update, insert, foreign};
