@@ -1,12 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import Paper from 'material-ui/Paper';
 //mine
-import {muiWrap} from './scripts/helpers.js'
-import './style/style.css';
-import mainLogo from './images/5ci-optimized.png';
+import {muiWrap} from '../scripts/helpers.js'
+import '../style/style.css';
+import mainLogo from '../images/5ci-optimized.png';
 
 const appBarStyle = {
   display: 'grid',

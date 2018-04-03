@@ -11,8 +11,10 @@ background color : #f1f1f1
 .sidebar {
   grid-column: start / 2;
 }
-.main-body {
+.mainbar {
   grid-column: 3 / 4;
+}
+.main-body {
   display: grid;
   grid-template-rows: [start-row] 0 36px 10px 0fr 5px 36px auto [end-row];
 }
@@ -21,5 +23,10 @@ background color : #f1f1f1
 }
 .list-data {
   grid-row: 4 / 5;
-  /* align-self: start; */
+}
+.list-data li {
+  margin-bottom: 5px;
+}
+.nav-pages {
+  grid-row: 6 / 7;
 }

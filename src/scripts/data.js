@@ -37,32 +37,6 @@ function remove(category, id) {
   }).then(response => response.json()).then(json => {
     // console.log(json);
   });
-
-
-  // const newDATA = {...DATA};
-  //
-  // let fKey;
-  // for (let key in FOREIGN) {
-  //   if (FOREIGN[key] === category) {
-  //     fKey = key;
-  //     break;
-  //   }
-  // }
-  //
-  // const categories = Object.keys(FORMAT);
-  // for(let c of categories) {
-  //   if (FORMAT[c].includes(fKey)) {
-  //     const cDATA = newDATA[c].slice();
-  //     cDATA.forEach((item, index) => {
-  //       if (item[fKey] === id) {
-  //         cDATA[index] = {...item, [fKey] : null};
-  //       }
-  //     });
-  //     newDATA[c] = cDATA;
-  //   }
-  // }
-  //
-  // newDATA[category] = newDATA[category].filter(item => item.id !== id);
 }
 
 function update(category, id, values) {

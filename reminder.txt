@@ -1,8 +1,10 @@
-1. install json-server : https://www.npmjs.com/package/json-server
+read about json-server : https://www.npmjs.com/package/json-server
 
-2. json-server --watch db.json --port 3004 --fks _id
+running json-server : json-server --watch db.json --port 3004 --fks _id
 
-3. add to package.json in "scripts"
-"dev-server": "json-server -p 3004 db.json"
+add this line to package.json in "scripts" : "dev-server": "json-server -p 3004 db.json"
 
-4. update npm
+update npm
+
+useful links :
+https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0
