@@ -71,4 +71,16 @@ function foreign(category) {
   return fKeys;
 }
 
+function foreign2(category) {
+  const allForeign = Object.keys(FOREIGN);
+  const foreign = FORMAT[category].filter(key => allForeign.includes(key));
+  return foreign.map(key => {
+    const category = FOREIGN[key];
+    return {
+      category,
+      key
+    };
+  });
+}
+
 export {FORMAT, FOREIGN, select, remove, update, insert, foreign};

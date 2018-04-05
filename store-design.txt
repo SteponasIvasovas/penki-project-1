@@ -1,0 +1,30 @@
+store = {
+  selectedCategory : string,
+  perPage: integer,
+  itemsByCategory : {
+    [category][] : {
+      isFetching: boolean,
+      totalPages, integer,
+      currentPage: integer,
+      items[]: {
+        item: Object,
+        out : string,
+        selectedIds: {
+          [itemForeignKeys] : [theirValues]
+        },
+        isFetchingAll...: boolean,
+        allAvailableForeignIdsBySelectedCategoryMappedWithNames[]: {
+          id : [foreign_id],
+          name : [name],
+        },
+        editable<UIState>: boolean
+      }
+    }
+  }
+  isFetchingAll...: boolean,
+  allAvailableForeignIdsBySelectedCategoryMappedWithNames[]: {
+    id : [foreign_id],
+    name : [name],
+  }
+  create<UIState> : boolean
+}

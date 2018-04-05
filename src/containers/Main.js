@@ -12,44 +12,43 @@ import '../style/style.css';
 
 const perPage = 5;
 
+const mapStateToProps = (state, ownProps) => ({
+  category: state.selectedCategory,
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    onCategoryClick: (category, page, perPage) => {
+      dispatch(selectCategory(category));
+      dispatch(fetchItems(category, page, perPage));
+    },
+    onAddSaveClick: (category, item) => {
+      dispatch(insertAndFetch(category, item));
+    }
+  }
+}
+
+const MainConnected = connect(mapStateToProps, mapDispatchToProps)(Main);
+
 class Main extends React.Component {
-  state = {
-    create: false,
-    selected: Object.keys(FORMAT)[0],
-    count: 0,
-  };
+  state = {create: false};
   handleCategoryClick = (category) => {
-    this.setState({
-      selected: category,
-      create: false,
-      count: (this.state.count + 1) % 2,
-    });
+    this.props.onCategoryClick(category, 0, perPage);
+    this.setState({create: false});
   }
   handleAddClick = () => {
-    this.setState({
-      create: true,
-      count: (this.state.count + 1) % 2,
-    });
+    this.setState({create: true});
   }
   handleAddCancelClick = () => {
-    this.setState({
-      create: false,
-      count: (this.state.count + 1) % 2,
-    });
+    this.setState({create: false});
   }
   handleAddSaveClick = (item) => {
-    insert(this.state.selected, item).then(() => {
-      this.setState({
-        create: false,
-        count: (this.state.count + 1) % 2,
-      });
-    });
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.count !== nextState.count;
+    this.props.onAddSaveClick(this.props.category, item);
+    this.setState({create: false});
   }
   render() {
-    const selected = this.state.selected;
+    const {category} = this.props;
+
     let body;
 
     if (this.state.create) {

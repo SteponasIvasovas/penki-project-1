@@ -4,8 +4,6 @@ import {Card, CardActions, CardText} from 'material-ui/Card';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
-// import Main from './Main.js';
-// import '../style/style.css';
 
 class EditForm extends React.Component {
   inputRef = React.createRef();

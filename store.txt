@@ -1,0 +1,123 @@
+Main {
+  parent: <root>
+  children: CreateForm, MainBody, Sidebar
+  state : {
+    create, selected, count
+  }
+  passedProps : {
+    toCreateForm: onAddCancelClick, onAddCreateClick, selected,
+    toMainBody: onAddClick, selected
+    toSidebar: categories, onCategoryClick
+  }
+  receivedProps : {
+    <none>
+  }
+}
+
+CreateForm {
+  parent : Main
+  children: EditForm
+  state : {
+    name, slectedIds, errorText, data, count
+  }
+  receivedProps : {
+    onAddCancelClick, onAddCreateClick, selected
+  }
+  passedProps : {
+    toEditForm: name, data, styles, selectedIds, onSelectChange, onNameChange, onSaveClick, onCancelClick
+  }
+}
+
+EditForm {
+  parent: CreateForm
+  children: <none>
+  state: {
+    <none>
+  }
+  receivedProps : {
+    toEditForm: name, data, styles, selectedIds, onSelectChange, onNameChange, onSaveClick, onCancelClick
+  }
+  passedProps : {
+    <none>
+  }
+}
+
+MainBody {
+  parent : Main
+  children : DataRow[], NavPages
+  state : {
+    page, data, pages, page, count
+  }
+  receivedProps : {
+    onAddClick, selected
+  }
+  passedProps : {
+    toDataRow : key, onItemDelete, item, selected
+    toNavPages : onPageClick, perPage, pages, current(state.page)
+  }
+}
+
+DataRow {
+  parent : MainBody
+  children : EditForm, InfoCard
+  state : {
+    editable, item, data, selectedIds, count, out
+  }
+  receivedProps : {
+    onAddClick, selected
+  }
+  passedProps : {
+    toEditForm : name, data, styles, selectedIds, onSelectChange, onNameChange, onSaveClick, onCancelClick
+    toInfoCard : onEditClick, onDeleteClick, out
+  }
+}
+
+InfoCard {
+  parent : DataRow
+  children : <none>
+  state : {
+    <none>
+  }
+  receivedProps : {
+    onEditClick, onDeleteClick, out
+  }
+  passedProps : {
+    <none>
+  }
+}
+
+EditForm {
+  parent : DataRow
+  children : <none>
+  state : <none>
+  receivedProps : {
+    name, data, styles, selectedIds, onSelectChange, onNameChange, onSaveClick, onCancelClick
+  }
+  passedProps : {
+    <none>
+  }
+}
+
+NavPages {
+  parent : MainBody
+  children : <none>
+  state : <none>
+  receivedProps : {
+    onPageClick, perPage, pages, page
+  }
+  passedProps : {
+    <none>
+  }
+}
+
+Sidebar {
+  parent : Main
+  children : <none>
+  state : <none>
+  receivedProps {
+    categories, onCategoryClick
+  }
+  passedProps {
+    <none>
+  }
+}
