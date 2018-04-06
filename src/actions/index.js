@@ -12,11 +12,30 @@ export const ITEM_UPDATE_REQUEST = 'ITEM_UPDATE_REQUEST';
 export const ITEM_UPDATE_SUCCESS = 'ITEM_UPDATE_SUCCESS';
 export const ITEM_DELETE_REQUEST = 'ITEM_DELETE_REQUEST';
 export const ITEM_DELETE_SUCCESS = 'ITEM_DELETE_SUCCESS';
+export const ENABLE_CREATE_UI = 'ENABLE_CREATE_UI';
+export const DISABLE_CREATE_UI = 'DISABLE_CREATE_UI';
 
 export const selectCategory = (category) => ({
   type: 'SELECT_CATEGORY',
   category
 });
+
+export const enableCreateUI = {type: ENABLE_CREATE_UI};
+export const disableCreateUI = {type: DISABLE_CREATE_UI};
+export const enableEditUI = (category, id) => {
+  return {
+    type: ENABLE_EDIT_UI;
+    category,
+    id
+  }
+};
+export const disableEditUI = (category, id) => {
+  return {
+    type: DISABLE_EDIT_UI,
+    category,
+    id
+  }
+}
 
 const requestSelectsData = (category) => ({
   type: 'REQUEST_SELECTS_DATA',
@@ -56,20 +75,15 @@ export const selectPage = (page) => ({
 });
 
 const insertItemRequest = {type: 'ITEM_INSERT_REQUEST'};
-
 const insertItemSuccess = {type: 'ITEM_INSERT_SUCCESS'};
-
 const updateItemRequest = {type: 'ITEM_UPDATE_REQUEST'};
-
 const updateItemSuccess = (category, id, item) => ({
   type: 'ITEM_UPDATE_SUCCESS'
   category,
   item,
   id
 });
-
 const deleteItemRequest = {type: 'ITEM_DELETE_REQUEST'};
-
 const deleteItemSuccess = {type: 'ITEM_DELETE_SUCCESS'};
 
 export const fetchItems = (category, page, perPage) => {
@@ -77,7 +91,7 @@ export const fetchItems = (category, page, perPage) => {
     dispatch(requestItems(category, page, perPage));
 
     return select([category]).then(data => {
-      const pages = data.length;
+      const pages = Math.ceil(data.length / perPage);
       const filtered = data.slice(page * perPage, page * perPage + perPage);
       return dispatch(receiveItems(category, filtered, pages, page));
     });
@@ -120,8 +134,9 @@ export const deleteItem = (category, id) => {
 
 export const deleteAndFetch = (category, id) => {
   return (dispatch, getState) => {
-    return dispatch(deleteItem).then(() => {
-      const { page, perPage } = getState();
+    return dispatch(deleteItem(category, id)).then(() => {
+      const { page } = getState().category;
+      const { perPage } = getState();
       return dispatch(fetchItems(category, page, perPage));
     });
   }

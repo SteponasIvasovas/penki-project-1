@@ -6,7 +6,7 @@ store = {
       isFetching: boolean,
       totalPages, integer,
       currentPage: integer,
-      items[]: {
+      items[<ids>]: {
         item: Object,
         out : string,
         selectedIds: {
@@ -26,5 +26,17 @@ store = {
     id : [foreign_id],
     name : [name],
   }
+  entities: {
+    itemsByCategory: {
+      [category] : {
+        [id] : {
+          item: {},
+          editUI: boolean
+          out:
+        }
+      }
+    }
+  }
+
   create<UIState> : boolean
 }

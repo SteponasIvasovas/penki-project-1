@@ -31,7 +31,7 @@ function items(state, action) {
     case RECEIVE_ITEMS:
       return {...state,
         isFetching: false,
-        items: action.items,
+        ids: action.items.map(item => item.id),
         page: action.page,
         pages: action.pages
         lastUpdate: action.receivedAt,
@@ -46,7 +46,7 @@ function items(state, action) {
     case ITEM_DELETE_REQUEST:
       return {...state, isDeleting: true};
     case ITEM_DELETE_SUCCESS:
-      return {...state, isDeleting: false};
+      return {...state, ids: state.ids.filter(id => id !== action.id), isDeleting: false};
     case ITEM_INSERT_REQUEST:
       return {...state, isInserting: true};
     case ITEM_INSERT_SUCCESS:
@@ -54,15 +54,7 @@ function items(state, action) {
     case ITEM_UPDATE_REQUEST:
       return {...state, isUpdating: true};
     case ITEM_UPDATE_SUCCESS:
-      return {...state,
-        isUpdating: false,
-        items: state.items.map(item => {
-          if (item.id === action.id) {
-            return {...item, action.item};
-          }
-          return item;
-        })
-      }
+      return {...state, isUpdating: false};
     default:
       return state;
   }
@@ -87,9 +79,62 @@ function itemsByCategory(state = {}, action) {
   }
 }
 
+function createUI(state = false, action) {
+  switch(action.type) {
+    case ENABLE_CREATE_UI:
+      return true;
+    case DISABLE_CREATE_UI:
+      return false;
+    default:
+      return state;
+  }
+}
+
+function entities(state = {}, action) {
+  switch(action.type) {
+    case RECEIVE_ITEMS:
+    case ITEM_UPDATE_SUCCESS:
+    case ENABLE_EDIT_UI:
+    case DISABLE_EDIT_UI:
+      return {...state, [action.category] : entityItemsByCategory(state[action.category], action)}
+    default:
+      return state;
+  }
+}
+
+function entityItemsByCategory(state = {}, action) {
+  switch(action.type) {
+    case RECEIVE_ITEMS:
+      let newState = {};
+      action.items.forEach(item => {
+        if (!state[item.id]) {
+          newState[item.id] = {...item, editUI: false};
+        } else {
+          newState[item.id] = {...state[item.id], ...item};
+        }
+      });
+
+      return {...state, ...newState};
+    case ITEM_UPDATE_SUCCESS:
+      return {...state, [action.id] : {...state[action.id], ...action.item, editUI: false}};
+    case ITEM_DELETE_SUCCESS:
+      newState = {...state}
+      delete newState[action.id];
+      return newState;
+    case ENABLE_EDIT_UI:
+      return {...state, [action.id] : {...state[action.id], editUI: true}};
+    case DISABLE_EDIT_UI:
+      return {...state, [action.id] : {...state[action.id], editUI: false}};
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   selectedCategory,
-  itemsByCategory
+  itemsByCategory,
+  createUI,
+  entities,
 });
 
 export default rootReducer;
