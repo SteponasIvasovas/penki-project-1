@@ -3,7 +3,6 @@ import AppBar from 'material-ui/AppBar';
 import {Tabs, Tab} from 'material-ui/Tabs';
 //mine
 import {muiWrap} from '../scripts/helpers.js'
-import '../style/style.css';
 import mainLogo from '../images/5ci-optimized.png';
 
 const appBarStyle = {

@@ -12,8 +12,4 @@ function muiWrap(...components) {
   return wrapped;
 }
 
-function cap(string) {
-  return string.slice(0, 1).toUpperCase() + string.slice(1);
-}
-
-export {muiWrap, cap};
+export {muiWrap};

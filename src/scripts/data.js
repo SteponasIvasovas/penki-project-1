@@ -65,12 +65,17 @@ function insert(category, values) {
   });
 }
 
+//isskaiciuoja kokius foreign kejus turi tam tikros kategorijos itemas. Funkcija grazina
+//foreign keju pavadinimu masyva pvz: ['a_id', 'b_id']
 function foreign(category) {
   const allFKeys = Object.keys(FOREIGN);
   const fKeys = FORMAT[category].filter(key => allFKeys.includes(key));
   return fKeys;
 }
 
+//daro ta pati ka ir pries tai funkcija tiktais grazina objektu masyva, objekta sudaro
+//du properciai key, category. Tai yra foreign kejaus pavadinimas ir kategorija i kuria jis rodo
+//pvz: [{key: miestai_id, category: miestai}, {key: zoles_id, category: zoles}]
 function foreign2(category) {
   const allForeign = Object.keys(FOREIGN);
   const foreign = FORMAT[category].filter(key => allForeign.includes(key));
@@ -83,4 +88,7 @@ function foreign2(category) {
   });
 }
 
-export {FORMAT, FOREIGN, select, remove, update, insert, foreign};
+
+
+
+export {FORMAT, FOREIGN, select, remove, update, insert, foreign, foreign2};

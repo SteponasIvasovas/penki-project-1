@@ -1,9 +1,24 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import CircularProgress from 'material-ui/CircularProgress';
+import RaisedButton from 'material-ui/RaisedButton';
+import PaginationConnected from './PaginationConnected';
+import DataRow from './DataRow';
+import {enableCreateUI} from '../actions';
+
+
+const styles = {
+  buttonStyle : {width: 200}
+}
+
 const mapStateToProps = (state, ownProps) => {
+  const category = state.selectedCategory
+  const ibc = state.itemsByCategory[category];
+
   return {
-    category: state.selectedCategory,
-    page: state[state.selectedCategory].page,
-    pages: state[state.selectedCategory].pages,
-    ids: state[state.selectedCategory].ids,
+    category: category,
+    ids: ibc ? ibc.ids : null,
   }
 };
 
@@ -12,30 +27,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     onAddClick: () => {
       dispatch(enableCreateUI);
     }
-    onDeleteClick: (category, id) => {
-      dispatch(deleteAndFetch(category, id));
-    }
-    loadData : (category, page, perPage) => {
-      dispatch(fetchItems(category, page, perPage));
-    }
   }
 }
 
 class MainBody extends React.Component {
-  handleDeleteClick = (id) => {
-    this.props.onDeleteClick(this.props.category, id);
-  }
-  handleAddClick = () => {
-    this.props.onAddClick();
-  }
-  componentDidMount() {
-    this.props.loadData(this.props.category, page, perPage)
-  }
   render() {
-    const {category, items, ids} = this.props;
+    const {category, ids, onAddClick} = this.props;
+    const {buttonStyle} = styles;
 
-    if (!items)
-      return muiWrap(<div className="main-body"><CircularProgress /></div>);
+    if (!ids)
+      return (<div className="main-body"><CircularProgress /></div>);
 
     const itemsUI = ids.map(id => {
       return (
@@ -48,28 +49,27 @@ class MainBody extends React.Component {
     return (
       <div className="main-body">
         <div className="btn-add">
-          {muiWrap(
-            <RaisedButton
-              style={{width: 200}}
-              primary={true}
-              label="Pridėti naują"
-              onClick={onAddClick}>
-            </RaisedButton>
-          )}
+          <RaisedButton
+            style={buttonStyle}
+            primary={true}
+            label="Pridėti naują"
+            onClick={onAddClick}/>
         </div>
         <ul className='list-data'>
           {itemsUI}
         </ul>
         <div className='nav-pages'>
-          {muiWrap(
-            <NavPages
-              onPageClick={this.handlePageClick}
-              perPage={perPage}
-              pages={pages}
-              current={page}/>
-            )}
+          <PaginationConnected/>
         </div>
       </div>
     );
   }
 }
+
+MainBody.propTypes = {
+  onAddClick: PropTypes.func.isRequired,
+  category: PropTypes.string.isRequired,
+  ids: PropTypes.arrayOf(PropTypes.number)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainBody)

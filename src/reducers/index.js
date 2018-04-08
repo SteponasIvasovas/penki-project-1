@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import {
   SELECT_PAGE,
+  SELECT_CATEGORY,
   REQUEST_ITEMS,
   RECEIVE_ITEMS,
   REQUEST_SELECTS_DATA,
@@ -10,10 +11,22 @@ import {
   ITEM_INSERT_REQUEST,
   ITEM_INSERT_SUCCESS,
   ITEM_UPDATE_REQUEST,
-  ITEM_UPDATE_SUCCESS
-} from './actions';
+  ITEM_UPDATE_SUCCESS,
+  ENABLE_CREATE_UI,
+  DISABLE_CREATE_UI,
+  ENABLE_EDIT_UI,
+  DISABLE_EDIT_UI,
+  REQUIRE_SELECTS_DATA,
+} from '../actions';
 
-function selectedCategory(state, action) {
+function perPage(state = 5, action) {
+  switch(action.type) {
+    default:
+      return state;
+  }
+}
+
+function selectedCategory(state = 'namai', action) {
   switch(action.type) {
     case SELECT_CATEGORY:
       return action.category;
@@ -22,7 +35,7 @@ function selectedCategory(state, action) {
   }
 }
 
-function items(state, action) {
+function items(state = {needSelectsData: true, page: 1}, action) {
   switch(action.type) {
     case SELECT_PAGE :
       return {...state, page: action.page};
@@ -33,7 +46,7 @@ function items(state, action) {
         isFetching: false,
         ids: action.items.map(item => item.id),
         page: action.page,
-        pages: action.pages
+        pages: action.pages,
         lastUpdate: action.receivedAt,
       };
     case REQUEST_SELECTS_DATA:
@@ -41,6 +54,7 @@ function items(state, action) {
     case RECEIVE_SELECTS_DATA:
       return {...state,
         isFechingSelectsData: false,
+        needSelectsData: false,
         selectsData: action.selectsData
       }
     case ITEM_DELETE_REQUEST:
@@ -55,6 +69,8 @@ function items(state, action) {
       return {...state, isUpdating: true};
     case ITEM_UPDATE_SUCCESS:
       return {...state, isUpdating: false};
+    case REQUIRE_SELECTS_DATA:
+      return {...state, needSelectsData: true}
     default:
       return state;
   }
@@ -73,6 +89,7 @@ function itemsByCategory(state = {}, action) {
     case ITEM_INSERT_SUCCESS:
     case ITEM_UPDATE_REQUEST:
     case ITEM_UPDATE_SUCCESS:
+    case REQUIRE_SELECTS_DATA:
       return {...state, [action.category] : items(state[action.category], action)}
     default:
       return state;
@@ -114,9 +131,9 @@ function entityItemsByCategory(state = {}, action) {
         }
       });
 
-      return {...state, ...newState};
+      return {...newState};
     case ITEM_UPDATE_SUCCESS:
-      return {...state, [action.id] : {...state[action.id], ...action.item, editUI: false}};
+      return {...state, [action.id] : {...state[action.id], ...action.item}};
     case ITEM_DELETE_SUCCESS:
       newState = {...state}
       delete newState[action.id];
@@ -135,6 +152,7 @@ const rootReducer = combineReducers({
   itemsByCategory,
   createUI,
   entities,
+  perPage
 });
 
 export default rootReducer;

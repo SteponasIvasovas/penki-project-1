@@ -1,78 +1,49 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import CircularProgress from 'material-ui/CircularProgress';
-//mine
-import {FORMAT, FOREIGN, select, remove, update, insert, foreign} from '../scripts/data.js';
-import {muiWrap} from '../scripts/helpers.js'
-import Sidebar from './Sidebar.js';
-import InfoCard from './InfoCard.js';
-import EditForm from './EditForm.js';
-import NavPages from './NavPages.js';
-import '../style/style.css';
+import SidebarConnected from './SidebarConnected';
+import CreateForm from './CreateForm';
+import MainBody from './MainBody';
+import {connect} from 'react-redux';
+import {fetchItems, fetchSelectsData} from '../actions';
 
 const mapStateToProps = (state, ownProps) => ({
-  category: state.selectedCategory,
   createUI: state.createUI,
+  category: state.selectedCategory,
+  perPage: state.perPage,
 });
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  loadData: (category, page, perPage) => dispatch(fetchItems(category, 1, perPage)),
+  loadSelectsData: (category) => dispatch(fetchSelectsData(category)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return {
+    createUI: stateProps.createUI,
+    loadAllData: () => {
+      dispatchProps.loadData(stateProps.category, 1, stateProps.perPage);
+      dispatchProps.loadSelectsData(stateProps.category);
+    }
+  }
+}
+
 class Main extends React.Component {
+  componentDidMount() {
+    this.props.loadAllData();
+  }
   render() {
     const {createUI} = this.props;
-
-    let body;
-
-    if (createUI) {
-      body = (<CreateForm />);
-    } else {
-      body = (<MainBody />);
-    }
 
     return (
       <React.Fragment>
         <div className="sidebar">
-          {muiWrap(<Sidebar/>)}
+          <SidebarConnected />
         </div>
         <div className="mainbar">
-          {body}
+          {createUI ? <CreateForm /> : <MainBody />}
         </div>
       </React.Fragment>
     );
   }
 }
 
-const MainConnected = connect(mapStateToProps)(Main);
-
-function generateOut(item, selected) {
-  return new Promise((resolve) => {
-    const cols = FORMAT[selected], fKeys = Object.keys(FOREIGN);
-    let out = [], counter = 0;
-    cols.forEach((col, index) => {
-      if (fKeys.includes(col)) {
-        const id = item[col];
-
-        if (id) {
-          select([FOREIGN[col]], (data) => {
-            return data.find(dItem => dItem.id === id).name;
-          }).then((name) => {
-            // out[index]= `${col} : ${name}`; counter++;
-            out[index] = `${name}`; counter++;
-            if (counter === cols.length) {
-              resolve(out);
-            }
-          });
-        }
-      } else {
-        // out[index] = `${col} : ${item[col]}`; counter++;
-        if (col === 'id') {
-          counter++;
-        } else {
-          out[index] = `${item[col]}`; counter++;
-        }
-
-        if (counter === cols.length) resolve(out);
-      }
-    });
-  });
-}
-
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Main);

@@ -8,7 +8,6 @@ import Sidebar from './Sidebar.js';
 import InfoCard from './InfoCard.js';
 import EditForm from './EditForm.js';
 import NavPages from './NavPages.js';
-import '../style/style.css';
 
 const perPage = 5;
 

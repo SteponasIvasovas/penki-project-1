@@ -1,8 +1,12 @@
+// import React from 'react';
+// import Main from './components/Main.js';
+// import {createStore} from 'redux';
+
 import ReactDOM from 'react-dom';
 import React from 'react';
-import Main from './components/Main.js';
-import Header from './components/Header.js'
-import {createStore} from 'redux';
+import Root from './containers/Root';
+import Header from './componentsOLD/Header.js';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 ReactDOM.render(
   <Header />,
@@ -10,6 +14,8 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-  <Main />,
+  (<MuiThemeProvider>
+    <Root />
+  </MuiThemeProvider>),
   document.getElementById('main')
 );
