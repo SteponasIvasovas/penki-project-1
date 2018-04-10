@@ -17,6 +17,7 @@ import {
   ENABLE_EDIT_UI,
   DISABLE_EDIT_UI,
   REQUIRE_SELECTS_DATA,
+  SET_FILTER_TEXT
 } from '../actions';
 
 function perPage(state = 5, action) {
@@ -147,12 +148,22 @@ function entityItemsByCategory(state = {}, action) {
   }
 }
 
+function filterText(state = '', action) {
+  switch(action.type) {
+    case SET_FILTER_TEXT:
+      return action.filterText;
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   selectedCategory,
   itemsByCategory,
   createUI,
   entities,
-  perPage
+  perPage,
+  filterText
 });
 
 export default rootReducer;

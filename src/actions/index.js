@@ -1,8 +1,5 @@
 import {select, remove, insert, update, foreign2, FORMAT} from '../scripts/data';
 
-const LAST_PAGE = -5;
-
-
 export const SELECT_CATEGORY = 'SELECT_CATEGORY';
 export const SELECT_PAGE = 'SELECT_PAGE';
 export const REQUEST_ITEMS = 'REQUEST_ITEMS';
@@ -20,6 +17,7 @@ export const DISABLE_CREATE_UI = 'DISABLE_CREATE_UI';
 export const ENABLE_EDIT_UI = 'ENABLE_EDIT_UI';
 export const DISABLE_EDIT_UI = 'DISABLE_EDIT_UI';
 export const REQUIRE_SELECTS_DATA = 'REQUIRE_SELECTS_DATA';
+export const SET_FILTER_TEXT = 'SET_FILTER_TEXT';
 
 export const selectCategory = (category) => ({
   type: SELECT_CATEGORY,
@@ -56,6 +54,10 @@ export const selectPage = (category, page) => ({
   category,
   page
 });
+export const setFilterText = (filterText) => ({
+  type: SET_FILTER_TEXT,
+  filterText
+})
 const requestItems = (category) => ({
   type: REQUEST_ITEMS,
   category
@@ -101,18 +103,12 @@ const requireSelectsData = (category) => ({
 export const fetchItems = (category, page, perPage) => {
   return (dispatch, getState) => {
     dispatch(requestItems(category, page, perPage));
-
     return select([category]).then(data => {
-      const ibc = getState().itemsByCategory[category];
-      const prevPages = ibc ? ibc.pages : null;
+      const {filterText} = getState();
+      data = data.filter(item => item.name.includes(filterText));
       const pages = Math.ceil(data.length / perPage);
-
-      if (page === LAST_PAGE) {
-        page = pages;
-      } else if (prevPages && pages < prevPages) {
-        page = Math.max(1, page - 1);
-      }
-
+      //from delete && insert
+      if (page > pages) page = pages;
       const filtered = data.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
       return dispatch(receiveItems(category, filtered, pages, page));
     });
@@ -126,11 +122,6 @@ export const fetchSelectsData = (category) => {
     const promises = [];
     fKeys.forEach(fKey => {
       promises.push(select([fKey.category]).then(data => {
-        // data = data.map(item => ({
-        //   id: item.id,
-        //   name: item.name,
-        //   item: item,
-        // }));
         return {[fKey.category] : data};
       }));
     });
@@ -163,8 +154,8 @@ export const deleteItem = (category, id) => {
 export const deleteAndFetch = (category, id) => {
   return (dispatch, getState) => {
     return dispatch(deleteItem(category, id)).then(() => {
-      const { page } = getState().itemsByCategory[category];
-      const { perPage } = getState();
+      const {perPage} = getState();
+      const {page} = getState().itemsByCategory[category];
       return dispatch(fetchItems(category, page, perPage));
     });
   }
@@ -180,8 +171,9 @@ export const insertItem = (category, item) => {
 export const insertAndFetch = (category, item) => {
   return (dispatch, getState) => {
     return dispatch(insertItem(category, item)).then(() => {
-      const {perPage} = getState();
-      return dispatch(fetchItems(category, LAST_PAGE, perPage));
+      const {filteredText, perPage} = getState();
+      const page = filteredText ? 1 : Infinity;
+      return dispatch(fetchItems(category, page, perPage));
     });
   }
 }
@@ -193,7 +185,6 @@ export const updateItem = (category, id, item) => {
     });
   }
 };
-
 export const requireSelectsDataForAll = (updatedCategory) => {
   return (dispatch, getState) => {
     const available = Object.keys(getState().itemsByCategory);
@@ -202,5 +193,14 @@ export const requireSelectsDataForAll = (updatedCategory) => {
       if (FORMAT[category].includes(`${updatedCategory}_id`))
        dispatch(requireSelectsData(category))
     });
+  }
+}
+export const setTextAndFetch = (text) => {
+  return (dispatch, getState) => {
+    const {perPage, selectedCategory} = getState();
+    console.log(perPage, selectedCategory);
+    dispatch(selectPage(selectedCategory, 1));
+    dispatch(setFilterText(text));
+    return dispatch(fetchItems(selectedCategory, 1, perPage));
   }
 }

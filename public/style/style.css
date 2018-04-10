@@ -22,10 +22,18 @@ body {
 }
 .main-body {
   display: grid;
-  grid-template-rows: [start-row] 0 36px 10px 0fr 5px 36px auto [end-row];
+  grid-template-rows: [start-row] 0 48px 10px 0fr 5px 36px auto [end-row];
 }
 .btn-add {
+  align-self: flex-end;
+}
+.search-field {
+  align-self: flex-end;
+}
+.control-panel {
   grid-row: 2 / 3;
+  display: flex;
+  justify-content: space-between;
 }
 .list-data {
   grid-row: 4 / 5;
