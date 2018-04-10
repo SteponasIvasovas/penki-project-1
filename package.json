@@ -7,10 +7,10 @@
     "axios": "^0.18.0",
     "material-ui": "^0.20.0",
     "material-ui-pagination": "^1.1.7",
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
     "react-redux": "^5.0.7",
-    "react-scripts": "^1.1.2",
+    "react-scripts": "^1.1.4",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0"

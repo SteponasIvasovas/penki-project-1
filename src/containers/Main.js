@@ -1,5 +1,5 @@
 import React from 'react';
-import SidebarConnected from './SidebarConnected';
+import SidebarWrapper from './SidebarWrapper';
 import CreateForm from './CreateForm';
 import MainBody from './MainBody';
 import {connect} from 'react-redux';
@@ -36,7 +36,7 @@ class Main extends React.Component {
     return (
       <React.Fragment>
         <div className="sidebar">
-          <SidebarConnected />
+          <SidebarWrapper />
         </div>
         <div className="mainbar">
           {createUI ? <CreateForm /> : <MainBody />}

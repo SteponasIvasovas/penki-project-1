@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
-import PaginationConnected from './PaginationConnected';
+import PaginationWrapper from './PaginationWrapper';
 import DataRow from './DataRow';
 import {enableCreateUI} from '../actions';
 
@@ -59,7 +59,7 @@ class MainBody extends React.Component {
           {itemsUI}
         </ul>
         <div className='nav-pages'>
-          <PaginationConnected/>
+          <PaginationWrapper/>
         </div>
       </div>
     );

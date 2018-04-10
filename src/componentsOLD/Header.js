@@ -1,8 +1,6 @@
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
 import {Tabs, Tab} from 'material-ui/Tabs';
-//mine
-import {muiWrap} from '../scripts/helpers.js'
 import mainLogo from '../images/5ci-optimized.png';
 
 const appBarStyle = {
@@ -49,20 +47,18 @@ class Header extends React.Component {
           label='House management' />
         <Tab
           style={tabStyle}
-          label='Dick management' />
+          label='Nothing management' />
         <Tab
           style={tabStyle}
           label='Something management' />
       </Tabs>
     );
     return (
-      muiWrap(
         <AppBar
           title={logo}
           style={appBarStyle}
           children={tabs}
           showMenuIconButton={false} />
-      )
     );
   }
 }

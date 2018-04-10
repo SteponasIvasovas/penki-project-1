@@ -9,7 +9,9 @@ import Header from './componentsOLD/Header.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 ReactDOM.render(
-  <Header />,
+  (<MuiThemeProvider>
+    <Header />
+  </MuiThemeProvider>),
   document.getElementById('header')
 );
 

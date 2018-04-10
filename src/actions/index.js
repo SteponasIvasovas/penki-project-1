@@ -126,11 +126,12 @@ export const fetchSelectsData = (category) => {
     const promises = [];
     fKeys.forEach(fKey => {
       promises.push(select([fKey.category]).then(data => {
-        data = data.map(item => ({
-          id: item.id,
-          name: item.name,
-        }));
-        return {[fKey.key] : data};
+        // data = data.map(item => ({
+        //   id: item.id,
+        //   name: item.name,
+        //   item: item,
+        // }));
+        return {[fKey.category] : data};
       }));
     });
 
@@ -196,7 +197,6 @@ export const updateItem = (category, id, item) => {
 export const requireSelectsDataForAll = (updatedCategory) => {
   return (dispatch, getState) => {
     const available = Object.keys(getState().itemsByCategory);
-    console.log(available);
 
     available.forEach(category => {
       if (FORMAT[category].includes(`${updatedCategory}_id`))

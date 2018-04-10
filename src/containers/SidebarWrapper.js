@@ -17,10 +17,8 @@ const styles = {
   },
 }
 const mapStateToProps = (state, ownProps) => {
-  const ibc = state.itemsByCategory[state.selectedCategory];
   return {
     category: state.selectedCategory,
-    //page: ibc ? ibc.page : 1,
     perPage: state.perPage,
   }
 };

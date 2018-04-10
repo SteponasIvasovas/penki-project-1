@@ -5,8 +5,10 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import PropTypes from 'prop-types';
+import {foreign} from '../scripts/data';
 
 class AppForm extends React.Component {
+  toNull = {};
   constructor(props) {
     super(props);
     const name = this.props.item ? this.props.item.name : '';
@@ -28,8 +30,8 @@ class AppForm extends React.Component {
   }
   handleSaveClick = () => {
     if (this.state.name.length > 0) {
-      const id = {id : this.props.id};
-      const item = {...id, ...this.state.selectedIds, name: this.state.name};
+      const id = this.props.item ? {id : this.props.item.id} : null;
+      const item = {...id, ...this.state.selectedIds, ...this.toNull, name: this.state.name};
       this.props.onSaveClick(item);
     } else {
       this.setState({errorText: 'Laukelis privalomas'});
@@ -41,7 +43,8 @@ class AppForm extends React.Component {
   render() {
     const {styles, selectsData, onCancelClick} = this.props;
     const {buttonStyle, leftButtonStyle, rightButtonStyle, labelStyle, cardContainer} = styles;
-    const selects = generateSelects(selectsData, this.handleSelectChange, this.state.selectedIds);
+    const {selects, toNull} = generateSelects(selectsData, this.handleSelectChange, this.state.selectedIds);
+    this.toNull = toNull;
 
     return (
       <Card containerStyle={cardContainer}>
@@ -76,35 +79,53 @@ class AppForm extends React.Component {
 function generateSelects(data, handler, ids) {
   if (!data) return false;
   const selects = [];
-  const keys = Object.keys(data);
+  const categories = Object.keys(data);
+  let toNull = {};
 
-  keys.forEach(key => {
-    const cData = data[key];
+  categories.forEach(category => {
+    const cData = data[category];
     const options = [];
 
     options.push(
       <MenuItem key={0} value={null} primaryText="" />
     );
 
-    cData.forEach(item => {
+    const fKeys = foreign(category);
+    const category_id = `${category}_id`;
+    let fData = cData;
+
+    if (fKeys.length > 0) {
+      fData = cData.filter(item => {
+        return fKeys.every(key => {
+          return !ids[key] || item[key] === ids[key]
+        });
+      });
+
+      if (fData.length === 0 ||
+        fData.findIndex(item => item.id === ids[category_id]) === -1 ) {
+        toNull = {...toNull, [category_id]: null};
+      }
+    }
+
+    fData.forEach(item => {
       options.push(
         <MenuItem key={item.id} value={item.id} primaryText={item.name}/>
       );
     });
 
     selects.push(
-      <div key={key}>
+      <div key={category}>
         <SelectField
-          floatingLabelText={key}
-          value={ids[key]}
-          onChange={(event, index, value) => handler(key, value)}>
+          floatingLabelText={category}
+          value={ids[category_id]}
+          onChange={(event, index, value) => handler(category_id, value)}>
           {options}
         </SelectField>
       </div>
     );
   });
 
-  return selects;
+  return {selects, toNull};
 }
 
 AppForm.propTypes = {
