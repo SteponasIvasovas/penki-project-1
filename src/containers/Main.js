@@ -4,6 +4,7 @@ import CreateForm from './CreateForm';
 import MainBody from './MainBody';
 import {connect} from 'react-redux';
 import {fetchItems, fetchSelectsData} from '../actions';
+import MapContainer from './MapContainer';
 
 const mapStateToProps = (state, ownProps) => ({
   createUI: state.createUI,
@@ -40,6 +41,9 @@ class Main extends React.Component {
         </div>
         <div className="mainbar">
           {createUI ? <CreateForm /> : <MainBody />}
+        </div>
+        <div className="map-container">
+          {/* <MapContainer /> */}
         </div>
       </React.Fragment>
     );

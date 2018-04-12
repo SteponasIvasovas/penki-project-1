@@ -100,10 +100,22 @@ const requireSelectsData = (category) => ({
   type: REQUIRE_SELECTS_DATA,
   category,
 });
+
+const partialFetch = (category, page, perPage) => {
+  return (dispatch, getState) => {
+
+  }
+}
+
+
 export const fetchItems = (category, page, perPage) => {
   return (dispatch, getState) => {
     dispatch(requestItems(category, page, perPage));
-    return select([category]).then(data => {
+    return select(category).then(data => {
+      // console.log(data);
+      // var g = JSON.stringify(data).replace(/[\[\]\,\"]/g,'');
+      // console.log(g.length);
+
       const {filterText} = getState();
       data = data.filter(item => item.name.includes(filterText));
       const pages = Math.ceil(data.length / perPage);
@@ -121,7 +133,7 @@ export const fetchSelectsData = (category) => {
     const fKeys = foreign2(category);
     const promises = [];
     fKeys.forEach(fKey => {
-      promises.push(select([fKey.category]).then(data => {
+      promises.push(select(fKey.category).then(data => {
         return {[fKey.category] : data};
       }));
     });

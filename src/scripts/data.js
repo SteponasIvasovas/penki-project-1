@@ -10,22 +10,41 @@ const FORMAT = {
   miestai : ['id', 'name'],
 }
 
-async function select(categories, where = null) {
-  let promises = [];
 
-  for (let category of categories) {
-    promises.push(fetch(`http://localhost:3004/${category}`));
-  }
-
-  let select = await Promise.all(promises).then(responses => {
-    return Promise.all(responses.map(r => r.json()));
-  }).then(json => {
-    return json.reduce((a, b) => a.concat(b));
+function select(category) {
+  return fetch(`http://localhost:3004/${category}`, {
+    "method": "GET",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  }).then(response => {
+    let myHeaders = response.headers
+    for (var pair of myHeaders.entries()) {
+       console.log(pair[0]+ ': '+ pair[1]);
+    }
+    return response.json();
   });
-
-  if (where) return where(select);
-  else return select;
 }
+
+
+// async function select(categories, where = null) {
+//   let promises = [];
+//
+//   for (let category of categories) {
+//     promises.push(fetch(`http://localhost:3004/${category}?_page=5&_limit=20`));
+//   }
+//
+//   let select = await Promise.all(promises).then(responses => {
+//     console.log(responses["X-Total-Count"]);
+//     return Promise.all(responses.map(r => r.json()));
+//   }).then(json => {
+//     return json.reduce((a, b) => a.concat(b));
+//   });
+//
+//   if (where) return where(select);
+//   else return select;
+// }
 
 function remove(category, id) {
   return fetch(`http://localhost:3004/${category}/${id}`, {

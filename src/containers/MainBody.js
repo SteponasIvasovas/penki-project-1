@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {orange500, blue500} from 'material-ui/styles/colors';
 import PaginationWrapper from './PaginationWrapper';
 import DataRow from './DataRow';
 import {enableCreateUI, setTextAndFetch} from '../actions';
@@ -48,7 +47,7 @@ class MainBody extends React.Component {
   }
   render() {
     const {category, ids, onAddClick} = this.props;
-    const {buttonStyle, inputStyle, iconStyle} = styles;
+    const {buttonStyle, inputStyle} = styles;
 
     if (!ids)
       return (<div className="main-body"><CircularProgress /></div>);

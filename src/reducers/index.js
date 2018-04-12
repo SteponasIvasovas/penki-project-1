@@ -20,7 +20,7 @@ import {
   SET_FILTER_TEXT
 } from '../actions';
 
-function perPage(state = 5, action) {
+function perPage(state = 10, action) {
   switch(action.type) {
     default:
       return state;

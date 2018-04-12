@@ -5,14 +5,15 @@ import AppSidebar from '../components/AppSidebar';
 
 const styles = {
   containerStyle : {
-    display: 'grid',
-    gridTemplateRows: '0fr auto'
+    // display: 'subgrid',
+    // gridTemplateRows: '0fr auto'
   },
   paperStyle : {
     backgroundColor: 'rgba(232, 240, 194, 0.5)',
-    gridRow: '1/2',
+    // gridRow: '1/2',
   },
   menuItemStyle : {
+    width: 112,
     textAlign: 'center'
   },
 }

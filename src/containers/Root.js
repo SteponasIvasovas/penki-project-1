@@ -9,7 +9,9 @@ export default class Root extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <Main />
+        <React.Fragment>
+          <Main />
+        </React.Fragment>
       </Provider>
     )
   }

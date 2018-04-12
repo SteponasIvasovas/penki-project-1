@@ -13,12 +13,20 @@ body {
   max-width: 95%;
   margin: 0 auto;
   grid-template-columns: [start] 112px 10px auto [end];
+  grid-template-rows: [top] auto 20px 700px [bottom] 50px;
 }
 .sidebar {
   grid-column: start / 2;
+  grid-row: top / 2;
 }
 .mainbar {
-  grid-column: 3 / 4;
+  grid-row: top / 2;
+  grid-column: 3 / end;
+}
+.map-container {
+  grid-row: 3 / bottom;
+  grid-column: start / end;
+  position: relative;
 }
 .main-body {
   display: grid;
