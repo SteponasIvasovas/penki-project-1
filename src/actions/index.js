@@ -18,6 +18,8 @@ export const ENABLE_EDIT_UI = 'ENABLE_EDIT_UI';
 export const DISABLE_EDIT_UI = 'DISABLE_EDIT_UI';
 export const REQUIRE_SELECTS_DATA = 'REQUIRE_SELECTS_DATA';
 export const SET_FILTER_TEXT = 'SET_FILTER_TEXT';
+export const SET_TOTAL_ITEMS = 'SET_TOTAL_ITEMS';
+export const RECEIVE_MAP_DATA = 'RECEIVE_MAP_DATA';
 
 export const selectCategory = (category) => ({
   type: SELECT_CATEGORY,
@@ -58,6 +60,11 @@ export const setFilterText = (filterText) => ({
   type: SET_FILTER_TEXT,
   filterText
 })
+export const setTotalItems = (category, totalItems) => ({
+  type: SET_TOTAL_ITEMS,
+  category,
+  totalItems
+});
 const requestItems = (category) => ({
   type: REQUEST_ITEMS,
   category
@@ -101,26 +108,31 @@ const requireSelectsData = (category) => ({
   category,
 });
 
-const partialFetch = (category, page, perPage) => {
+export const partialFetch = (category, page, perPage) => {
   return (dispatch, getState) => {
-
+    dispatch(requestItems(category));
+    const {filterText} = getState();
+    const start = (page - 1) * perPage,
+          end = start + perPage;
+    let totalItems;
+    return fetch(`http://localhost:3004/${category}?name_like=${filterText}&_start=${start}&_end=${end}`)
+      .then(response => {
+        totalItems = response.headers.get('X-Total-Count');
+        dispatch(setTotalItems(category, totalItems));
+        return response.json();
+      }).then(data => {
+        const pages = Math.ceil(totalItems / perPage);
+        return dispatch(receiveItems(category, data, pages, page));
+      });
   }
 }
 
 
 export const fetchItems = (category, page, perPage) => {
   return (dispatch, getState) => {
-    dispatch(requestItems(category, page, perPage));
+    dispatch(requestItems(category));
     return select(category).then(data => {
-      // console.log(data);
-      // var g = JSON.stringify(data).replace(/[\[\]\,\"]/g,'');
-      // console.log(g.length);
-
-      const {filterText} = getState();
-      data = data.filter(item => item.name.includes(filterText));
       const pages = Math.ceil(data.length / perPage);
-      //from delete && insert
-      if (page > pages) page = pages;
       const filtered = data.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
       return dispatch(receiveItems(category, filtered, pages, page));
     });
@@ -167,8 +179,12 @@ export const deleteAndFetch = (category, id) => {
   return (dispatch, getState) => {
     return dispatch(deleteItem(category, id)).then(() => {
       const {perPage} = getState();
-      const {page} = getState().itemsByCategory[category];
-      return dispatch(fetchItems(category, page, perPage));
+      const {page, pages, totalItems} = getState().itemsByCategory[category];
+
+      let newPage = page;
+      if (page === pages && totalItems % perPage === 1) newPage = pages - 1;
+
+      return dispatch(partialFetch(category, newPage, perPage));
     });
   }
 }
@@ -183,9 +199,17 @@ export const insertItem = (category, item) => {
 export const insertAndFetch = (category, item) => {
   return (dispatch, getState) => {
     return dispatch(insertItem(category, item)).then(() => {
-      const {filteredText, perPage} = getState();
-      const page = filteredText ? 1 : Infinity;
-      return dispatch(fetchItems(category, page, perPage));
+      const {filterText, perPage} = getState();
+      const {totalItems, pages} = getState().itemsByCategory[category];
+      let page;
+
+      if (item.name.includes(filterText)) {
+        if (totalItems % perPage === 0) page = pages + 1;
+        else page = pages;
+      } else {
+        page = 1;
+      }
+      return dispatch(partialFetch(category, page, perPage));
     });
   }
 }
@@ -203,16 +227,42 @@ export const requireSelectsDataForAll = (updatedCategory) => {
 
     available.forEach(category => {
       if (FORMAT[category].includes(`${updatedCategory}_id`))
-       dispatch(requireSelectsData(category))
+        dispatch(requireSelectsData(category))
     });
   }
 }
 export const setTextAndFetch = (text) => {
   return (dispatch, getState) => {
     const {perPage, selectedCategory} = getState();
-    console.log(perPage, selectedCategory);
-    dispatch(selectPage(selectedCategory, 1));
     dispatch(setFilterText(text));
-    return dispatch(fetchItems(selectedCategory, 1, perPage));
+    return dispatch(partialFetch(selectedCategory, 1, perPage));
+  }
+}
+export const receiveMapData = (items) => ({
+  type: RECEIVE_MAP_DATA,
+  items
+});
+export const loopFetch = () => {
+  return (dispatch, getState) => {
+    const {filterText} = getState();
+    let totalItems, perPage = 100;
+
+    fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${0}&_end=${perPage}`)
+    .then(response => {
+      totalItems = response.headers.get('X-Total-Count');
+      return response.json();
+    })
+    .then(json => {
+      dispatch(receiveMapData(json));
+      for(let start = perPage, end = start + perPage; start < totalItems; start += perPage, end += perPage) {
+        fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${start}&_end=${end}`)
+          .then(response => {
+            return response.json();
+          }).then(json => {
+
+            // setTimeout(() => dispatch(receiveMapData(json)), delay);
+          });
+      }
+    });
   }
 }

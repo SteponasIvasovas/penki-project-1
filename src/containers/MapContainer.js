@@ -1,22 +1,31 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {loopFetch} from '../actions';
 
 const API_KEY = 'AIzaSyAY4i3QJhpO-L1zXUWoD2isnrGh3vODl_M';
 
 export class MapContainer extends React.Component {
+  // allItems = this.props.items;
+  componentDidMount() {
+    this.props.loadMapData();
+    // allItems = this.props.items;
+    // console.log('hello');
+  }
+  componentDidUpdate() {
+    // allItems.concat(this.props.items)
+  }
   onMarkerClick = (props, marker, e) => {
-    console.log(props, marker, e);
   }
   render() {
     const {items} = this.props;
     let itemsUI;
     if (items) {
-      const keys = Object.keys(items);
-      const firstItem = keys.length > 0 ? items[keys[0]] : null;
-      if (firstItem && firstItem.location) {
-        itemsUI = keys.map(key => {
-          const item = items[key];
+      // const keys = Object.keys(items);
+      // const firstItem = keys.length > 0 ? items[keys[0]] : null;
+      // if (firstItem && firstItem.location) {
+        itemsUI = items.map(item => {
+          // const item = items[key];
           let {lat, lng} = item.location;
 
           lat = lat > 0 ? Math.min(lat, 80) : Math.max(lat, -80);
@@ -32,7 +41,6 @@ export class MapContainer extends React.Component {
             />
           );
         });
-      }
     }
 
     return (
@@ -46,10 +54,15 @@ export class MapContainer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    items: state.entities[state.selectedCategory],
+    items: state.mapData.items,
+  }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    loadMapData: () => dispatch(loopFetch())
   }
 }
 
-export default connect(mapStateToProps)(GoogleApiWrapper({
+export default connect(mapStateToProps, mapDispatchToProps)(GoogleApiWrapper({
   apiKey:  API_KEY
 })(MapContainer))

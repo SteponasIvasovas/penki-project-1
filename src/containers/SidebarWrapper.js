@@ -1,4 +1,4 @@
-import {selectCategory, fetchItems, fetchSelectsDataIfNeeded, disableCreateUI} from '../actions';
+import {selectCategory, fetchItems, fetchSelectsDataIfNeeded, disableCreateUI, partialFetch} from '../actions';
 import {connect} from 'react-redux';
 import {FORMAT} from '../scripts/data';
 import AppSidebar from '../components/AppSidebar';
@@ -27,7 +27,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onCategoryClick: (category, page, perPage) => {
       dispatch(selectCategory(category));
-      dispatch(fetchItems(category, page, perPage));
+      dispatch(partialFetch(category, page, perPage));
       dispatch(fetchSelectsDataIfNeeded(category));
       dispatch(disableCreateUI);
     }

@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {selectPage, fetchItems} from '../actions';
+import {selectPage, fetchItems, partialFetch} from '../actions';
 import AppPagination from '../components/AppPagination';
 
 const styles = {
@@ -26,7 +26,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(selectPage(category, page));
     },
     loadData: (category, page, perPage) => {
-      dispatch(fetchItems(category, page, perPage));
+      dispatch(partialFetch(category, page, perPage));
     }
   }
 }

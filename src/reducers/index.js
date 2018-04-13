@@ -17,7 +17,9 @@ import {
   ENABLE_EDIT_UI,
   DISABLE_EDIT_UI,
   REQUIRE_SELECTS_DATA,
-  SET_FILTER_TEXT
+  SET_FILTER_TEXT,
+  SET_TOTAL_ITEMS,
+  RECEIVE_MAP_DATA
 } from '../actions';
 
 function perPage(state = 10, action) {
@@ -71,7 +73,9 @@ function items(state = {needSelectsData: true, page: 1}, action) {
     case ITEM_UPDATE_SUCCESS:
       return {...state, isUpdating: false};
     case REQUIRE_SELECTS_DATA:
-      return {...state, needSelectsData: true}
+      return {...state, needSelectsData: true};
+    case SET_TOTAL_ITEMS:
+      return {...state, totalItems: action.totalItems}
     default:
       return state;
   }
@@ -91,6 +95,7 @@ function itemsByCategory(state = {}, action) {
     case ITEM_UPDATE_REQUEST:
     case ITEM_UPDATE_SUCCESS:
     case REQUIRE_SELECTS_DATA:
+    case SET_TOTAL_ITEMS:
       return {...state, [action.category] : items(state[action.category], action)}
     default:
       return state;
@@ -157,13 +162,23 @@ function filterText(state = '', action) {
   }
 }
 
+function mapData(state = {items: []}, action) {
+  switch(action.type) {
+    case RECEIVE_MAP_DATA:
+      return {...state, items: action.items};
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   selectedCategory,
   itemsByCategory,
   createUI,
   entities,
   perPage,
-  filterText
+  filterText,
+  mapData
 });
 
 export default rootReducer;

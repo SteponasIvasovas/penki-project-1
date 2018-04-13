@@ -4,7 +4,7 @@ const FOREIGN = {
   miestai_id: 'miestai',
 }
 const FORMAT = {
-  namai : ['id', 'name', 'miestai_id', 'gatves_id', 'rajonai_id'],
+  namai : ['id', 'name', 'miestai_id', 'gatves_id', 'rajonai_id', 'location'],
   gatves: ['id', 'name', 'rajonai_id', 'miestai_id'],
   rajonai : ['id', 'name', 'miestai_id'],
   miestai : ['id', 'name'],
@@ -19,10 +19,6 @@ function select(category) {
       "Accept": "application/json"
     }
   }).then(response => {
-    let myHeaders = response.headers
-    for (var pair of myHeaders.entries()) {
-       console.log(pair[0]+ ': '+ pair[1]);
-    }
     return response.json();
   });
 }
@@ -53,8 +49,6 @@ function remove(category, id) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     }
-  }).then(response => response.json()).then(json => {
-    // console.log(json);
   });
 }
 

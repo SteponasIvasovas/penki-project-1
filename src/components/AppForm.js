@@ -31,7 +31,8 @@ class AppForm extends React.Component {
   handleSaveClick = () => {
     if (this.state.name.length > 0) {
       const id = this.props.item ? {id : this.props.item.id} : null;
-      const item = {...id, ...this.state.selectedIds, ...this.toNull, name: this.state.name};
+      const item = {...id, ...this.state.selectedIds, ...this.toNull, name: this.state.name, location: {...this.props.location}};
+      console.log(item)
       this.props.onSaveClick(item);
     } else {
       this.setState({errorText: 'Laukelis privalomas'});
