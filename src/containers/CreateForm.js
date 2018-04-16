@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import {insertAndFetch, disableCreateUI, requireSelectsDataForAll} from '../actions';
-import {foreign, FORMAT} from '../scripts/data';
+import {foreign, SCHEMA} from '../scripts/data';
 import AppForm from '../components/AppForm';
 
 const styles = {
@@ -42,7 +42,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const {category, selectsData} = stateProps;
   let location;
 
-  if (FORMAT[category].includes('location')) {
+  if (SCHEMA[category].includes('location')) {
     location = {
       lat: Math.random() * Math.sign(Math.random() - 0.5) * 80,
       lng: Math.random() * Math.sign(Math.random() - 0.5) * 180,

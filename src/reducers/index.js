@@ -1,34 +1,19 @@
 import { combineReducers } from 'redux';
 import {
-  SELECT_PAGE,
-  SELECT_CATEGORY,
-  REQUEST_ITEMS,
-  RECEIVE_ITEMS,
-  REQUEST_SELECTS_DATA,
-  RECEIVE_SELECTS_DATA,
-  ITEM_DELETE_REQUEST,
-  ITEM_DELETE_SUCCESS,
-  ITEM_INSERT_REQUEST,
-  ITEM_INSERT_SUCCESS,
-  ITEM_UPDATE_REQUEST,
-  ITEM_UPDATE_SUCCESS,
-  ENABLE_CREATE_UI,
-  DISABLE_CREATE_UI,
-  ENABLE_EDIT_UI,
-  DISABLE_EDIT_UI,
-  REQUIRE_SELECTS_DATA,
-  SET_FILTER_TEXT,
-  SET_TOTAL_ITEMS,
-  RECEIVE_MAP_DATA
-} from '../actions';
-
+  SELECT_CATEGORY, ENABLE_CREATE_UI, DISABLE_CREATE_UI, ENABLE_EDIT_UI,
+  DISABLE_EDIT_UI, REQUEST_SELECTS_DATA, RECEIVE_SELECTS_DATA, SELECT_PAGE,
+  SET_FILTER_TEXT, SET_TOTAL_ITEMS, REQUEST_ITEMS, RECEIVE_ITEMS, ITEM_INSERT_SUCCESS,
+  ITEM_INSERT_REQUEST, ITEM_UPDATE_SUCCESS, ITEM_UPDATE_REQUEST, ITEM_DELETE_SUCCESS,
+  ITEM_DELETE_REQUEST, REQUIRE_SELECTS_DATA, RECEIVE_MAP_DATA
+} from '../actions/actionTypes';
+//hardcoded = BAD!
 function perPage(state = 10, action) {
   switch(action.type) {
     default:
       return state;
   }
 }
-
+//hardcoded = BAD!
 function selectedCategory(state = 'namai', action) {
   switch(action.type) {
     case SELECT_CATEGORY:
@@ -115,6 +100,7 @@ function createUI(state = false, action) {
 
 function entities(state = {}, action) {
   switch(action.type) {
+    case RECEIVE_MAP_DATA:
     case RECEIVE_ITEMS:
     case ITEM_UPDATE_SUCCESS:
     case ENABLE_EDIT_UI:
@@ -127,8 +113,9 @@ function entities(state = {}, action) {
 
 function entityItemsByCategory(state = {}, action) {
   switch(action.type) {
+    case RECEIVE_MAP_DATA:
     case RECEIVE_ITEMS:
-      let newState = {};
+      let newState = {...state};
       action.items.forEach(item => {
         if (!state[item.id]) {
           newState[item.id] = {...item, editUI: false};
@@ -162,23 +149,13 @@ function filterText(state = '', action) {
   }
 }
 
-function mapData(state = {items: []}, action) {
-  switch(action.type) {
-    case RECEIVE_MAP_DATA:
-      return {...state, items: action.items};
-    default:
-      return state;
-  }
-}
-
 const rootReducer = combineReducers({
   selectedCategory,
   itemsByCategory,
   createUI,
   entities,
   perPage,
-  filterText,
-  mapData
+  filterText
 });
 
 export default rootReducer;

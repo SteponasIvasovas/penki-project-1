@@ -3,9 +3,8 @@ import SidebarWrapper from './SidebarWrapper';
 import CreateForm from './CreateForm';
 import MainBody from './MainBody';
 import {connect} from 'react-redux';
-import {fetchItems, fetchSelectsData, partialFetch} from '../actions';
+import {fetchSelectsData, partialFetch} from '../actions';
 import MapContainer from './MapContainer';
-import {select} from '../scripts/data';
 
 const mapStateToProps = (state, ownProps) => ({
   createUI: state.createUI,
@@ -15,7 +14,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   loadData: (category, page, perPage) => dispatch(partialFetch(category, 1, perPage)),
-  // loadData: (category, page, perPage) => dispatch(fetchItems(category, 1, perPage)),
   loadSelectsData: (category) => dispatch(fetchSelectsData(category)),
 });
 
@@ -32,7 +30,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 class Main extends React.Component {
   componentDidMount() {
     this.props.loadAllData();
-    // select('namai').then(json => console.log(json.map(item => item.id)));
   }
   render() {
     const {createUI} = this.props;

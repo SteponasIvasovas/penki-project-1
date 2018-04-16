@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {selectPage, fetchItems, partialFetch} from '../actions';
+import {selectPage, partialFetch} from '../actions';
 import AppPagination from '../components/AppPagination';
 
 const styles = {

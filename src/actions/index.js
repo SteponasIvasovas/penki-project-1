@@ -1,25 +1,11 @@
-import {select, remove, insert, update, foreign2, FORMAT} from '../scripts/data';
-
-export const SELECT_CATEGORY = 'SELECT_CATEGORY';
-export const SELECT_PAGE = 'SELECT_PAGE';
-export const REQUEST_ITEMS = 'REQUEST_ITEMS';
-export const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
-export const REQUEST_SELECTS_DATA = 'REQUEST_SELECTS_DATA';
-export const RECEIVE_SELECTS_DATA = 'RECEIVE_SELECTS_DATA';
-export const ITEM_INSERT_REQUEST = 'ITEM_INSERT_REQUEST';
-export const ITEM_INSERT_SUCCESS = 'ITEM_INSERT_SUCCESS';
-export const ITEM_UPDATE_REQUEST = 'ITEM_UPDATE_REQUEST';
-export const ITEM_UPDATE_SUCCESS = 'ITEM_UPDATE_SUCCESS';
-export const ITEM_DELETE_REQUEST = 'ITEM_DELETE_REQUEST';
-export const ITEM_DELETE_SUCCESS = 'ITEM_DELETE_SUCCESS';
-export const ENABLE_CREATE_UI = 'ENABLE_CREATE_UI';
-export const DISABLE_CREATE_UI = 'DISABLE_CREATE_UI';
-export const ENABLE_EDIT_UI = 'ENABLE_EDIT_UI';
-export const DISABLE_EDIT_UI = 'DISABLE_EDIT_UI';
-export const REQUIRE_SELECTS_DATA = 'REQUIRE_SELECTS_DATA';
-export const SET_FILTER_TEXT = 'SET_FILTER_TEXT';
-export const SET_TOTAL_ITEMS = 'SET_TOTAL_ITEMS';
-export const RECEIVE_MAP_DATA = 'RECEIVE_MAP_DATA';
+import {select, remove, insert, update, foreign2, SCHEMA} from '../scripts/data';
+import {
+  SELECT_CATEGORY, ENABLE_CREATE_UI, DISABLE_CREATE_UI, ENABLE_EDIT_UI,
+  DISABLE_EDIT_UI, REQUEST_SELECTS_DATA, RECEIVE_SELECTS_DATA, SELECT_PAGE,
+  SET_FILTER_TEXT, SET_TOTAL_ITEMS, REQUEST_ITEMS, RECEIVE_ITEMS, ITEM_INSERT_SUCCESS,
+  ITEM_INSERT_REQUEST, ITEM_UPDATE_SUCCESS, ITEM_UPDATE_REQUEST, ITEM_DELETE_SUCCESS,
+  ITEM_DELETE_REQUEST, REQUIRE_SELECTS_DATA, RECEIVE_MAP_DATA
+} from './actionTypes';
 
 export const selectCategory = (category) => ({
   type: SELECT_CATEGORY,
@@ -41,6 +27,11 @@ export const disableEditUI = (category, id) => {
     id
   }
 }
+export const selectPage = (category, page) => ({
+  type: SELECT_PAGE,
+  category,
+  page
+});
 const requestSelectsData = (category) => ({
   type: REQUEST_SELECTS_DATA,
   category
@@ -51,16 +42,15 @@ const receiveSelectsData = (category, selectsData) => ({
   selectsData,
   receivedAt: Date.now()
 });
-export const selectPage = (category, page) => ({
-  type: SELECT_PAGE,
+const requireSelectsData = (category) => ({
+  type: REQUIRE_SELECTS_DATA,
   category,
-  page
 });
-export const setFilterText = (filterText) => ({
+const setFilterText = (filterText) => ({
   type: SET_FILTER_TEXT,
   filterText
 })
-export const setTotalItems = (category, totalItems) => ({
+const setTotalItems = (category, totalItems) => ({
   type: SET_TOTAL_ITEMS,
   category,
   totalItems
@@ -103,11 +93,11 @@ const deleteItemSuccess = (category) => ({
   type: ITEM_DELETE_SUCCESS,
   category
 });
-const requireSelectsData = (category) => ({
-  type: REQUIRE_SELECTS_DATA,
-  category,
+const receiveMapData = (items) => ({
+  type: RECEIVE_MAP_DATA,
+  category: 'namai',
+  items
 });
-
 export const partialFetch = (category, page, perPage) => {
   return (dispatch, getState) => {
     dispatch(requestItems(category));
@@ -126,8 +116,6 @@ export const partialFetch = (category, page, perPage) => {
       });
   }
 }
-
-
 export const fetchItems = (category, page, perPage) => {
   return (dispatch, getState) => {
     dispatch(requestItems(category));
@@ -226,7 +214,7 @@ export const requireSelectsDataForAll = (updatedCategory) => {
     const available = Object.keys(getState().itemsByCategory);
 
     available.forEach(category => {
-      if (FORMAT[category].includes(`${updatedCategory}_id`))
+      if (SCHEMA[category].includes(`${updatedCategory}_id`))
         dispatch(requireSelectsData(category))
     });
   }
@@ -238,31 +226,62 @@ export const setTextAndFetch = (text) => {
     return dispatch(partialFetch(selectedCategory, 1, perPage));
   }
 }
-export const receiveMapData = (items) => ({
-  type: RECEIVE_MAP_DATA,
-  items
-});
 export const loopFetch = () => {
   return (dispatch, getState) => {
     const {filterText} = getState();
-    let totalItems, perPage = 100;
+    const queuedActions = [];
+    const intervalTime = 100, interval = 100;
+    let totalItems, lastTime = null, lastQueued = null, allLoaded = false;
 
-    fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${0}&_end=${perPage}`)
+    function maybeAction() {
+      if (queuedActions.length && !lastQueued && !allLoaded) {
+        const action = queuedActions.shift();
+        const diff = Date.now() - lastTime;
+
+        if (diff >= intervalTime) {
+          lastTime = Date.now();
+          lastQueued = null;
+          dispatch(action);
+          maybeAction();
+        }
+        else  {
+          lastQueued = setTimeout(() => {
+            lastTime = Date.now();
+            lastQueued = null;
+            dispatch(action);
+            maybeAction();
+          }, intervalTime - diff);
+        }
+      }
+    }
+
+    fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${0}&_end=${interval}`)
     .then(response => {
       totalItems = response.headers.get('X-Total-Count');
       return response.json();
     })
     .then(json => {
+      const promises = [];
+      lastTime = Date.now();
       dispatch(receiveMapData(json));
-      for(let start = perPage, end = start + perPage; start < totalItems; start += perPage, end += perPage) {
-        fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${start}&_end=${end}`)
-          .then(response => {
-            return response.json();
-          }).then(json => {
 
-            // setTimeout(() => dispatch(receiveMapData(json)), delay);
-          });
+      for(let start = interval, end = start + interval; start < totalItems; start += interval, end += interval) {
+        promises.push(fetch(`http://localhost:3004/namai?name_like${filterText}&_start=${start}&_end=${end}`)
+        .then(response => {
+          return response.json();
+        }).then(json => {
+          queuedActions.push(receiveMapData(json));
+          maybeAction();
+          return json;
+        }));
       }
+
+      Promise.all(promises).then(data => {
+        data = data.reduce((a, b) => a.concat(b));
+        allLoaded = true;
+        clearTimeout(lastQueued);
+        dispatch(receiveMapData(data));
+      });
     });
   }
 }

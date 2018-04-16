@@ -3,7 +3,7 @@ const FOREIGN = {
   rajonai_id: 'rajonai',
   miestai_id: 'miestai',
 }
-const FORMAT = {
+const SCHEMA = {
   namai : ['id', 'name', 'miestai_id', 'gatves_id', 'rajonai_id', 'location'],
   gatves: ['id', 'name', 'rajonai_id', 'miestai_id'],
   rajonai : ['id', 'name', 'miestai_id'],
@@ -82,7 +82,7 @@ function insert(category, values) {
 //foreign keju pavadinimu masyva pvz: ['a_id', 'b_id']
 function foreign(category) {
   const allFKeys = Object.keys(FOREIGN);
-  const fKeys = FORMAT[category].filter(key => allFKeys.includes(key));
+  const fKeys = SCHEMA[category].filter(key => allFKeys.includes(key));
   return fKeys;
 }
 
@@ -91,7 +91,7 @@ function foreign(category) {
 //pvz: [{key: miestai_id, category: miestai}, {key: zoles_id, category: zoles}]
 function foreign2(category) {
   const allForeign = Object.keys(FOREIGN);
-  const foreign = FORMAT[category].filter(key => allForeign.includes(key));
+  const foreign = SCHEMA[category].filter(key => allForeign.includes(key));
   return foreign.map(key => {
     const category = FOREIGN[key];
     return {
@@ -104,4 +104,4 @@ function foreign2(category) {
 
 
 
-export {FORMAT, FOREIGN, select, remove, update, insert, foreign, foreign2};
+export {SCHEMA, FOREIGN, select, remove, update, insert, foreign, foreign2};

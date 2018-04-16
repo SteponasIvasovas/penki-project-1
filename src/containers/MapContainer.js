@@ -6,28 +6,42 @@ import {loopFetch} from '../actions';
 const API_KEY = 'AIzaSyAY4i3QJhpO-L1zXUWoD2isnrGh3vODl_M';
 
 export class MapContainer extends React.Component {
-  // allItems = this.props.items;
+  state = {
+    showingInfoWindow: false,
+    activeMarker: null,
+    selectedPlace: {}
+  }
   componentDidMount() {
     this.props.loadMapData();
-    // allItems = this.props.items;
-    // console.log('hello');
   }
   componentDidUpdate() {
-    // allItems.concat(this.props.items)
+  }
+  onMapClick = (props) => {
+    if (this.state.showingInfoWindow) {
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: null
+      })
+    }
   }
   onMarkerClick = (props, marker, e) => {
+    console.log(props);
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow : true
+    });
   }
   render() {
     const {items} = this.props;
     let itemsUI;
     if (items) {
-      // const keys = Object.keys(items);
-      // const firstItem = keys.length > 0 ? items[keys[0]] : null;
-      // if (firstItem && firstItem.location) {
-        itemsUI = items.map(item => {
-          // const item = items[key];
+      const ids = Object.keys(items);
+      const firstItem = ids.length > 0 ? items[ids[0]] : null;
+      if (firstItem && firstItem.location) {
+        itemsUI = ids.map(id => {
+          const item = items[id];
           let {lat, lng} = item.location;
-
           lat = lat > 0 ? Math.min(lat, 80) : Math.max(lat, -80);
 
           if (lng > 180) lng = -360 + lng;
@@ -41,11 +55,19 @@ export class MapContainer extends React.Component {
             />
           );
         });
+      }
     }
 
     return (
       <Map google={this.props.google} zoom={2}>
         {itemsUI}
+        <InfoWindow
+          marker={this.state.activeMarker}
+          visible={this.state.showingInfoWindow}>
+            <div>
+              <h2>{this.state.selectedPlace.name}</h2>
+            </div>
+        </InfoWindow>
       </Map>
     );
   }
@@ -54,7 +76,7 @@ export class MapContainer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    items: state.mapData.items,
+    items: state.entities['namai'],
   }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -64,5 +86,5 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GoogleApiWrapper({
-  apiKey:  API_KEY
+  apiKey: API_KEY
 })(MapContainer))

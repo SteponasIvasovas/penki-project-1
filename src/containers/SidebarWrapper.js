@@ -1,6 +1,6 @@
-import {selectCategory, fetchItems, fetchSelectsDataIfNeeded, disableCreateUI, partialFetch} from '../actions';
+import {selectCategory, fetchSelectsDataIfNeeded, disableCreateUI, partialFetch} from '../actions';
 import {connect} from 'react-redux';
-import {FORMAT} from '../scripts/data';
+import {SCHEMA} from '../scripts/data';
 import AppSidebar from '../components/AppSidebar';
 
 const styles = {
@@ -39,7 +39,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       if (stateProps.category === category) return;
       dispatchProps.onCategoryClick(category, 1, stateProps.perPage);
     },
-    categories: Object.keys(FORMAT),
+    categories: Object.keys(SCHEMA),
     styles: styles,
   }
 }

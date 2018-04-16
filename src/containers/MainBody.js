@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import PaginationWrapper from './PaginationWrapper';
 import DataRow from './DataRow';
-import {enableCreateUI, setTextAndFetch, setTextAndPartialFetch} from '../actions';
+import {enableCreateUI, setTextAndFetch} from '../actions';
 
 
 const styles = {

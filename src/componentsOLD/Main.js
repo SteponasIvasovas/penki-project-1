@@ -2,7 +2,7 @@ import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
 //mine
-import {FORMAT, FOREIGN, select, remove, update, insert, foreign} from '../scripts/data.js';
+import {SCHEMA, FOREIGN, select, remove, update, insert, foreign} from '../scripts/data.js';
 import {muiWrap} from '../scripts/helpers.js'
 import Sidebar from './Sidebar.js';
 import InfoCard from './InfoCard.js';
@@ -14,7 +14,7 @@ const perPage = 5;
 class Main extends React.Component {
   state = {
     create: false,
-    selected: Object.keys(FORMAT)[0],
+    selected: Object.keys(SCHEMA)[0],
     count: 0,
   };
   handleCategoryClick = (category) => {
@@ -71,7 +71,7 @@ class Main extends React.Component {
         <div className="sidebar">
           {muiWrap(
             <Sidebar
-              categories={Object.keys(FORMAT)}
+              categories={Object.keys(SCHEMA)}
               onCategoryClick={this.handleCategoryClick}/>
             )}
         </div>
@@ -450,7 +450,7 @@ function getSelectsData(selected) {
 
 function generateOut(item, selected) {
   return new Promise((resolve) => {
-    const cols = FORMAT[selected], fKeys = Object.keys(FOREIGN);
+    const cols = SCHEMA[selected], fKeys = Object.keys(FOREIGN);
     let out = [], counter = 0;
     cols.forEach((col, index) => {
       if (fKeys.includes(col)) {
